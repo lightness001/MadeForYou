@@ -1,6 +1,6 @@
 /* ==========================================================================
    MadeForYou - Hybrid Data Storage Engine
-   Supports IndexedDB local storage, compressed URL hashes, and Supabase DB sync
+   Supports IndexedDB local storage, URL-Safe compressed payloads, and Supabase DB sync
    ========================================================================== */
 
 class StorageManager {
@@ -81,10 +81,27 @@ class StorageManager {
     }
 
     async getSurprise(id) {
-        if (id && id.startsWith('payload_')) {
+        if (!id) return null;
+
+        // Handle URL-safe Payload
+        if (id.startsWith('payload_')) {
             try {
-                const base64Data = id.replace('payload_', '');
-                const jsonStr = decodeURIComponent(escape(atob(base64Data)));
+                let base64Data = id.replace('payload_', '');
+                // Handle URL decoding if browser encoded characters
+                base64Data = decodeURIComponent(base64Data);
+                // Restore URL-safe characters (- to +, _ to /)
+                base64Data = base64Data.replace(/-/g, '+').replace(/_/g, '/');
+                
+                // Add padding if missing
+                while (base64Data.length % 4 !== 0) {
+                    base64Data += '=';
+                }
+
+                // Decode UTF-8 string from Base64
+                const jsonStr = decodeURIComponent(Array.prototype.map.call(atob(base64Data), (c) => {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+
                 const compactObj = JSON.parse(jsonStr);
                 return this.decodeCompactPayload(compactObj);
             } catch (e) {
@@ -92,11 +109,13 @@ class StorageManager {
             }
         }
 
+        // Handle LocalStorage lookup
         const localData = localStorage.getItem(`mfy_surprise_${id}`);
         if (localData) {
             return JSON.parse(localData);
         }
 
+        // Handle IndexedDB lookup
         if (this.db) {
             const fromIDB = await new Promise((resolve) => {
                 const tx = this.db.transaction('surprises', 'readonly');
@@ -162,7 +181,15 @@ class StorageManager {
                 imgs: surpriseData.memories || []
             };
             const jsonStr = JSON.stringify(compact);
-            const base64 = btoa(unescape(encodeURIComponent(jsonStr)));
+            
+            // Encode to UTF-8 Base64
+            let base64 = btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+                return String.fromCharCode('0x' + p1);
+            }));
+
+            // Make URL-Safe (replace + with -, / with _, remove =)
+            base64 = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            
             return `payload_${base64}`;
         } catch (e) {
             console.error("Encoding error:", e);

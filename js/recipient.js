@@ -146,7 +146,7 @@ class RecipientJourney {
 
         if (nameLbl) nameLbl.textContent = this.surpriseData.recipient_name;
         if (subtextLbl) {
-            subtextLbl.textContent = `Someone made this special surprise just for you (${this.surpriseData.relationship || 'with love'}) ❤️`;
+            subtextLbl.textContent = `I made this special surprise just for you (${this.surpriseData.relationship || 'with love'}) ❤️`;
         }
 
         // Start ambient background music loop if chosen

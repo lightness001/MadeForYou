@@ -365,10 +365,8 @@ class CreatorWizard {
 
         const saved = await storageManager.saveSurprise(this.formData);
 
-        let shareId = saved.id;
-        if (saved.memories && saved.memories.length > 0) {
-            shareId = storageManager.encodeSurpriseToURL(saved);
-        }
+        // ALWAYS encode payload into URL so external devices (phones/tablets/WhatsApp) can decode it without local database dependency!
+        const shareId = storageManager.encodeSurpriseToURL(saved);
 
         const baseUrl = window.location.origin + window.location.pathname;
         const fullShareUrl = `${baseUrl}#s/${shareId}`;
@@ -435,7 +433,7 @@ class CreatorWizard {
         const baseUrl = window.location.origin + window.location.pathname;
 
         container.innerHTML = list.map((item) => {
-            const shareId = (item.memories && item.memories.length > 0) ? storageManager.encodeSurpriseToURL(item) : item.id;
+            const shareId = storageManager.encodeSurpriseToURL(item);
             const fullUrl = `${baseUrl}#s/${shareId}`;
             const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Recently';
 
