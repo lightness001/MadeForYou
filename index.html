@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MadeForYou ❤️ Create a Digital Surprise For Someone Special</title>
+    <meta name="description" content="Create a personalized, interactive digital surprise filled with photos, heartwarming messages, lock screens, custom themes, and background music for someone you love.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    
+    <!-- QR Code Generator CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+
+    <!-- Supabase JS Client (Optional backend sync) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Application Stylesheets -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-theme="love">
+
+    <!-- Background Dynamic Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Main App Container -->
+    <div id="app" class="app-viewport">
+        
+        <!-- HEADER / NAVIGATION -->
+        <header id="main-header" class="main-header">
+            <div class="logo" onclick="app.navigate('landing')">
+                <span class="logo-icon">💌</span>
+                <span class="logo-text">MadeForYou</span>
+            </div>
+            <nav class="nav-actions">
+                <button class="btn btn-ghost btn-sm" onclick="app.navigate('dashboard')">
+                    <i data-lucide="folder-heart"></i> My Surprises
+                </button>
+                <button class="btn btn-ghost btn-sm" id="btn-sound-toggle" onclick="audioManager.toggleMute()">
+                    <i data-lucide="volume-2"></i> Sound
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="app.startCreator()">
+                    <i data-lucide="sparkles"></i> Create Surprise
+                </button>
+            </nav>
+        </header>
+
+        <!-- ROUTE 1: LANDING PAGE -->
+        <section id="view-landing" class="view-screen active">
+            <div class="hero-container">
+                <div class="badge-pill">
+                    <span class="badge-sparkle">✨</span> Create Unforgettable Moments
+                </div>
+                <h1 class="hero-title">Create a little digital surprise for <span class="gradient-text">someone special</span></h1>
+                <p class="hero-subtitle">Turn your memories, heartwarming messages, and affection into a magical interactive experience protected with a password.</p>
+                
+                <div class="hero-cta-group">
+                    <button class="btn btn-gradient btn-lg pulse-glow" onclick="app.startCreator()">
+                        <i data-lucide="heart"></i> Create a Surprise Now
+                    </button>
+                    <button class="btn btn-outline btn-lg" onclick="app.loadDemoSurprise()">
+                        <i data-lucide="play-circle"></i> Try Live Demo
+                    </button>
+                </div>
+
+                <!-- Interactive Feature Highlights -->
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Secret Lock Screen</h3>
+                        <p>Protect your surprise with a secret password or the recipient's nickname.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">✨</div>
+                        <h3>Magical Unlock Story</h3>
+                        <p>Watch confetti, stars, and animated greetings pop open with audio effects.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📸</div>
+                        <h3>Photo Memories</h3>
+                        <p>Upload your favorite memory photos with captions and carousel slideshows.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💌</div>
+                        <h3>Interactive Envelope</h3>
+                        <p>Recipient physically taps the seal to open a beautiful handwritten letter.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎵</div>
+                        <h3>Ambient Music</h3>
+                        <p>Soothing synth background melodies (Piano, Acoustic Lofi, Celebratory chime).</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💬</div>
+                        <h3>Reaction & Thank You</h3>
+                        <p>Recipients can send reaction notes & WhatsApp thank-you messages instantly.</p>
+                    </div>
+                </div>
+
+                <!-- Relationship Inspiration Chips -->
+                <div class="inspiration-section">
+                    <p class="inspiration-title">Perfect for everyone you care about:</p>
+                    <div class="chips-cloud">
+                        <span class="chip-item">❤️ My Love</span>
+                        <span class="chip-item">🌸 My Mother</span>
+                        <span class="chip-item">👔 My Father</span>
+                        <span class="chip-item">👧 My Daughter</span>
+                        <span class="chip-item">👦 My Son</span>
+                        <span class="chip-item">👭 My Sister</span>
+                        <span class="chip-item">🤝 Best Friend</span>
+                        <span class="chip-item">🎂 Birthdays</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROUTE 2: MY SURPRISES DASHBOARD -->
+        <section id="view-dashboard" class="view-screen">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <div>
+                        <h2>My Created Surprises 💌</h2>
+                        <p>Manage, copy links, preview, or edit your digital surprises.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="app.startCreator()">
+                        <i data-lucide="plus"></i> New Surprise
+                    </button>
+                </div>
+
+                <div id="dashboard-surprises-list" class="surprises-grid">
+                    <!-- Populated dynamically from storage -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ROUTE 3: CREATOR WIZARD -->
+        <section id="view-creator" class="view-screen">
+            <div class="wizard-container">
+                
+                <!-- Wizard Stepper Navigation -->
+                <div class="wizard-stepper">
+                    <div class="step-item active" data-step="1">
+                        <span class="step-num">1</span>
+                        <span class="step-label">Recipient</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step-item" data-step="2">
+                        <span class="step-num">2</span>
+                        <span class="step-label">Message</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step-item" data-step="3">
+                        <span class="step-num">3</span>
+                        <span class="step-label">Memories</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step-item" data-step="4">
+                        <span class="step-num">4</span>
+                        <span class="step-label">Theme & Music</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step-item" data-step="5">
+                        <span class="step-num">5</span>
+                        <span class="step-label">Password</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step-item" data-step="6">
+                        <span class="step-num">6</span>
+                        <span class="step-label">Share</span>
+                    </div>
+                </div>
+
+                <!-- STEP 1: RECIPIENT & OCCASION -->
+                <div class="wizard-page active" id="wizard-step-1">
+                    <div class="page-header">
+                        <h2>Who is this surprise for? ❤️</h2>
+                        <p>Customize the recipient and occasion so we can tailor the templates and design.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-recipient-name">Recipient's Name or Nickname</label>
+                        <input type="text" id="input-recipient-name" class="form-control" placeholder="e.g. Sarah, Mom, David" maxlength="40">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-creator-name">Your Name (The Creator)</label>
+                        <input type="text" id="input-creator-name" class="form-control" placeholder="e.g. Lightness, Alex" maxlength="40">
+                    </div>
+
+                    <div class="form-group">
+                        <label>What is your relationship?</label>
+                        <div class="options-grid" id="grid-relationships">
+                            <div class="option-card active" data-value="My Love" data-icon="❤️">
+                                <span class="opt-icon">❤️</span>
+                                <span class="opt-text">My Love</span>
+                            </div>
+                            <div class="option-card" data-value="My Mother" data-icon="🌸">
+                                <span class="opt-icon">🌸</span>
+                                <span class="opt-text">My Mother</span>
+                            </div>
+                            <div class="option-card" data-value="My Father" data-icon="👔">
+                                <span class="opt-icon">👔</span>
+                                <span class="opt-text">My Father</span>
+                            </div>
+                            <div class="option-card" data-value="My Daughter" data-icon="👧">
+                                <span class="opt-icon">👧</span>
+                                <span class="opt-text">My Daughter</span>
+                            </div>
+                            <div class="option-card" data-value="My Son" data-icon="👦">
+                                <span class="opt-icon">👦</span>
+                                <span class="opt-text">My Son</span>
+                            </div>
+                            <div class="option-card" data-value="My Sister" data-icon="👭">
+                                <span class="opt-icon">👭</span>
+                                <span class="opt-text">My Sister</span>
+                            </div>
+                            <div class="option-card" data-value="My Brother" data-icon="👦">
+                                <span class="opt-icon">👦</span>
+                                <span class="opt-text">My Brother</span>
+                            </div>
+                            <div class="option-card" data-value="My Friend" data-icon="🤝">
+                                <span class="opt-icon">🤝</span>
+                                <span class="opt-text">My Friend</span>
+                            </div>
+                            <div class="option-card" data-value="Someone Special" data-icon="✨">
+                                <span class="opt-icon">✨</span>
+                                <span class="opt-text">Someone Special</span>
+                            </div>
+                            <div class="option-card" data-value="Other" data-icon="💫">
+                                <span class="opt-icon">💫</span>
+                                <span class="opt-text">Other</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>What is the occasion or message purpose?</label>
+                        <div class="options-grid" id="grid-occasions">
+                            <div class="option-card active" data-value="Love" data-icon="❤️">
+                                <span class="opt-icon">❤️</span>
+                                <span class="opt-text">I Love You</span>
+                            </div>
+                            <div class="option-card" data-value="Birthday" data-icon="🎂">
+                                <span class="opt-icon">🎂</span>
+                                <span class="opt-text">Happy Birthday</span>
+                            </div>
+                            <div class="option-card" data-value="I Miss You" data-icon="🥹">
+                                <span class="opt-icon">🥹</span>
+                                <span class="opt-text">I Miss You</span>
+                            </div>
+                            <div class="option-card" data-value="Courage" data-icon="💪">
+                                <span class="opt-icon">💪</span>
+                                <span class="opt-text">Stay Strong</span>
+                            </div>
+                            <div class="option-card" data-value="Thank You" data-icon="🙏">
+                                <span class="opt-icon">🙏</span>
+                                <span class="opt-text">Thank You</span>
+                            </div>
+                            <div class="option-card" data-value="Happiness" data-icon="😊">
+                                <span class="opt-icon">😊</span>
+                                <span class="opt-text">Have a Good Day</span>
+                            </div>
+                            <div class="option-card" data-value="Appreciation" data-icon="🌹">
+                                <span class="opt-icon">🌹</span>
+                                <span class="opt-text">Appreciation</span>
+                            </div>
+                            <div class="option-card" data-value="Just Because" data-icon="💌">
+                                <span class="opt-icon">💌</span>
+                                <span class="opt-text">Just Because</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button class="btn btn-primary btn-lg" onclick="creator.nextStep(2)">
+                            Continue to Message <i data-lucide="arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: CHOOSE & EDIT MESSAGE -->
+                <div class="wizard-page" id="wizard-step-2">
+                    <div class="page-header">
+                        <h2>Write Your Message 💌</h2>
+                        <p>Pick a pre-written heartwarming template or customize it with your own words.</p>
+                    </div>
+
+                    <!-- Template Selector Slider/Grid -->
+                    <div class="templates-wrapper">
+                        <label>Heartwarming Template Ideas:</label>
+                        <div class="templates-chips" id="template-chips">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Rich Message Editor -->
+                    <div class="editor-container">
+                        <div class="editor-toolbar">
+                            <button class="toolbar-btn" onclick="creator.insertEmoji('❤️')" title="Add Heart">❤️</button>
+                            <button class="toolbar-btn" onclick="creator.insertEmoji('🌸')" title="Add Flower">🌸</button>
+                            <button class="toolbar-btn" onclick="creator.insertEmoji('✨')" title="Add Sparkle">✨</button>
+                            <button class="toolbar-btn" onclick="creator.insertEmoji('🎂')" title="Add Cake">🎂</button>
+                            <button class="toolbar-btn" onclick="creator.insertEmoji('🥺')" title="Add Emotion">🥺</button>
+                            <div class="toolbar-divider"></div>
+                            <select id="select-font-family" class="toolbar-select" onchange="creator.updateFontFamily(this.value)">
+                                <option value="Dancing Script">Font: Dancing Script (Handwritten)</option>
+                                <option value="Caveat">Font: Caveat (Casual Note)</option>
+                                <option value="Cinzel">Font: Cinzel (Classic Serif)</option>
+                                <option value="Outfit">Font: Outfit (Modern Sans)</option>
+                            </select>
+                        </div>
+                        <textarea id="input-message-text" class="form-control editor-textarea" rows="7" placeholder="Write your heartfelt message here..."></textarea>
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button class="btn btn-outline" onclick="creator.prevStep(1)">
+                            <i data-lucide="arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary btn-lg" onclick="creator.nextStep(3)">
+                            Continue to Memories <i data-lucide="arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: MEMORIES / PHOTOS -->
+                <div class="wizard-page" id="wizard-step-3">
+                    <div class="page-header">
+                        <h2>Add Photos & Memories 📸</h2>
+                        <p>Share up to 10 special photos with short custom captions to take them down memory lane.</p>
+                    </div>
+
+                    <!-- Photo Upload Area -->
+                    <div class="photo-upload-zone" id="photo-upload-zone" onclick="document.getElementById('file-photo-input').click()">
+                        <input type="file" id="file-photo-input" accept="image/*" multiple style="display:none;" onchange="creator.handlePhotosUpload(event)">
+                        <div class="upload-zone-content">
+                            <div class="upload-icon">📸</div>
+                            <h3>Click or drag photos here to upload</h3>
+                            <p>Upload up to 10 photos (JPG, PNG, WebP). Automatic compression included.</p>
+                            <button type="button" class="btn btn-secondary btn-sm">Browse Photos</button>
+                        </div>
+                    </div>
+
+                    <!-- Presets / Sample Memories Loader -->
+                    <div class="sample-memories-bar">
+                        <span>Need sample photos to test?</span>
+                        <button type="button" class="btn btn-ghost btn-sm" onclick="creator.loadSamplePhotos()">
+                            <i data-lucide="image"></i> Load Beautiful Demo Photos
+                        </button>
+                    </div>
+
+                    <!-- Photo List Cards -->
+                    <div class="memories-list" id="memories-list">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button class="btn btn-outline" onclick="creator.prevStep(2)">
+                            <i data-lucide="arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary btn-lg" onclick="creator.nextStep(4)">
+                            Choose Theme & Music <i data-lucide="arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 4: THEMES & BACKGROUND MUSIC -->
+                <div class="wizard-page" id="wizard-step-4">
+                    <div class="page-header">
+                        <h2>Choose Theme & Background Music 🎨🎵</h2>
+                        <p>Select visual mood and ambient background music for your recipient.</p>
+                    </div>
+
+                    <!-- Ambient Music Track Selector -->
+                    <div class="music-selector-wrapper">
+                        <label><i data-lucide="music"></i> Select Ambient Music Vibe:</label>
+                        <div class="music-tracks-grid" id="music-tracks-grid">
+                            <div class="track-pill active" data-track="piano" onclick="creator.selectMusicTrack('piano')">
+                                <span>🎹 Soft Romantic Piano</span>
+                                <button type="button" class="btn-play-preview" onclick="event.stopPropagation(); creator.previewTrack('piano');">▶</button>
+                            </div>
+                            <div class="track-pill" data-track="lofi" onclick="creator.selectMusicTrack('lofi')">
+                                <span>🌙 Acoustic Lofi Chill</span>
+                                <button type="button" class="btn-play-preview" onclick="event.stopPropagation(); creator.previewTrack('lofi');">▶</button>
+                            </div>
+                            <div class="track-pill" data-track="celebration" onclick="creator.selectMusicTrack('celebration')">
+                                <span>🎂 Party Celebration</span>
+                                <button type="button" class="btn-play-preview" onclick="event.stopPropagation(); creator.previewTrack('celebration');">▶</button>
+                            </div>
+                            <div class="track-pill" data-track="ocean" onclick="creator.selectMusicTrack('ocean')">
+                                <span>🌊 Serene Ocean Pad</span>
+                                <button type="button" class="btn-play-preview" onclick="event.stopPropagation(); creator.previewTrack('ocean');">▶</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Themes Grid -->
+                    <label style="margin-top: 1rem;"><i data-lucide="palette"></i> Select Visual Theme Style:</label>
+                    <div class="themes-grid" id="themes-grid">
+                        <div class="theme-card active" data-theme="love" onclick="creator.selectTheme('love')">
+                            <div class="theme-preview love-bg">
+                                <span class="theme-badge">❤️ Love</span>
+                                <div class="theme-hearts">💖 💕</div>
+                            </div>
+                            <div class="theme-info">
+                                <h3>Romantic Love</h3>
+                                <p>Pink & red romance with floating hearts</p>
+                            </div>
+                        </div>
+
+                        <div class="theme-card" data-theme="soft" onclick="creator.selectTheme('soft')">
+                            <div class="theme-preview soft-bg">
+                                <span class="theme-badge">🌸 Soft</span>
+                                <div class="theme-hearts">🌸 🍃</div>
+                            </div>
+                            <div class="theme-info">
+                                <h3>Pastel Soft</h3>
+                                <p>Gentle floral spring petals</p>
+                            </div>
+                        </div>
+
+                        <div class="theme-card" data-theme="dream" onclick="creator.selectTheme('dream')">
+                            <div class="theme-preview dream-bg">
+                                <span class="theme-badge">🌌 Dream</span>
+                                <div class="theme-hearts">✨ 🌙</div>
+                            </div>
+                            <div class="theme-info">
+                                <h3>Starry Night</h3>
+                                <p>Deep space with twinkling stars</p>
+                            </div>
+                        </div>
+
+                        <div class="theme-card" data-theme="peace" onclick="creator.selectTheme('peace')">
+                            <div class="theme-preview peace-bg">
+                                <span class="theme-badge">🌊 Peace</span>
+                                <div class="theme-hearts">🌊 🫧</div>
+                            </div>
+                            <div class="theme-info">
+                                <h3>Ocean Serenity</h3>
+                                <p>Calm cyan blue with floating bubbles</p>
+                            </div>
+                        </div>
+
+                        <div class="theme-card" data-theme="birthday" onclick="creator.selectTheme('birthday')">
+                            <div class="theme-preview birthday-bg">
+                                <span class="theme-badge">🎂 Birthday</span>
+                                <div class="theme-hearts">🎈 🎉</div>
+                            </div>
+                            <div class="theme-info">
+                                <h3>Festive Celebration</h3>
+                                <p>Balloons & cheerful party confetti</p>
+                            </div>
+                        </div>
+
+                        <div class="theme-card" data-theme="happiness" onclick="creator.selectTheme('happiness')">
+                            <div class="theme-preview happiness-bg">
+                                <span class="theme-badge">🌈 Happiness</span>
+                                <div class="theme-hearts">☀️ 💛</div>
+                            </div>
+                            <div class="theme-info">
+                                <h3>Sunshine Joy</h3>
+                                <p>Vibrant warm yellow & playful glow</p>
+                            </div>
+                        </div>
+
+                        <div class="theme-card" data-theme="letter" onclick="creator.selectTheme('letter')">
+                            <div class="theme-preview letter-bg">
+                                <span class="theme-badge">📜 Vintage Letter</span>
+                                <div class="theme-hearts">✉️ 🖋️</div>
+                            </div>
+                            <div class="theme-info">
+                                <h3>Classic Parchment</h3>
+                                <p>Antique paper & warm candle light</p>
+                            </div>
+                        </div>
+
+                        <div class="theme-card" data-theme="gold" onclick="creator.selectTheme('gold')">
+                            <div class="theme-preview gold-bg">
+                                <span class="theme-badge">💎 Elegant Gold</span>
+                                <div class="theme-hearts">⭐ 👑</div>
+                            </div>
+                            <div class="theme-info">
+                                <h3>Obsidian Gold</h3>
+                                <p>Luxurious dark theme with golden sparkle</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button class="btn btn-outline" onclick="creator.prevStep(3)">
+                            <i data-lucide="arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary btn-lg" onclick="creator.nextStep(5)">
+                            Set Password <i data-lucide="arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 5: PASSWORD SECURITY -->
+                <div class="wizard-page" id="wizard-step-5">
+                    <div class="page-header">
+                        <h2>Create Secret Password 🔑</h2>
+                        <p>Protect the surprise so only your recipient can unlock it.</p>
+                    </div>
+
+                    <div class="password-setup-card">
+                        <div class="quick-pass-box">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="chk-use-recipient-pass" onchange="creator.toggleRecipientPassword(this.checked)">
+                                <span class="checkmark"></span>
+                                <span class="chk-text">Easy Password: Use recipient's name as password (e.g. <strong id="lbl-rec-pass-suggestion">SARAH</strong>)</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-custom-password">Custom Secret Password</label>
+                            <div class="password-input-wrapper">
+                                <input type="text" id="input-custom-password" class="form-control" placeholder="Enter password (e.g. MAMA or Sarah2026)" oninput="creator.onPasswordInput()">
+                                <button type="button" class="btn-input-action" onclick="creator.generateRandomPass()">
+                                    <i data-lucide="shuffle"></i> Auto
+                                </button>
+                            </div>
+                            <span class="form-help">Passwords are hashed using SHA-256 client cryptography for privacy.</span>
+                        </div>
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button class="btn btn-outline" onclick="creator.prevStep(4)">
+                            <i data-lucide="arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-gradient btn-lg" onclick="creator.generateSurpriseLink()">
+                            ✨ Generate Surprise Link <i data-lucide="sparkles"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 6: SHARE & PREVIEW -->
+                <div class="wizard-page" id="wizard-step-6">
+                    <div class="page-header">
+                        <h2>✨ Your Surprise is Ready! ✨</h2>
+                        <p><strong id="lbl-share-recipient-name">Sarah</strong> has a little surprise waiting for them ❤️</p>
+                    </div>
+
+                    <div class="share-box-card">
+                        <div class="share-link-input-group">
+                            <input type="text" id="input-share-link" class="form-control" readonly>
+                            <button class="btn btn-primary" onclick="creator.copyShareLink()">
+                                <i data-lucide="copy"></i> Copy Link
+                            </button>
+                        </div>
+
+                        <div class="share-buttons-row">
+                            <button class="btn btn-whatsapp btn-lg" onclick="creator.shareWhatsApp()">
+                                <i data-lucide="message-circle"></i> Share on WhatsApp
+                            </button>
+                            <button class="btn btn-secondary btn-lg" onclick="creator.previewSurprise()">
+                                <i data-lucide="eye"></i> Preview Experience
+                            </button>
+                        </div>
+
+                        <!-- QR Code Container -->
+                        <div class="qr-code-section">
+                            <p class="qr-title">Scan QR Code on Phone:</p>
+                            <div id="qr-code-canvas" class="qr-box"></div>
+                        </div>
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button class="btn btn-ghost" onclick="app.startCreator()">
+                            <i data-lucide="plus-circle"></i> Create Another Surprise
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ROUTE 4: RECIPIENT EXPERIENCE JOURNEY -->
+        <section id="view-recipient" class="view-screen">
+            
+            <!-- Floating Audio Control Bar -->
+            <div class="audio-control-bar" id="audio-control-bar">
+                <span class="music-icon-pulse">🎵</span>
+                <span class="music-track-name" id="lbl-current-playing-track">Playing: Soft Piano</span>
+                <button class="btn-audio-toggle" onclick="audioManager.toggleMusicLoop()">
+                    <i data-lucide="pause-circle" id="icon-music-state"></i>
+                </button>
+            </div>
+
+            <!-- STAGE 1: SECRET LOCK SCREEN -->
+            <div id="rec-stage-lock" class="recipient-stage active">
+                <div class="lock-card glass-panel">
+                    <div class="lock-icon-wrapper">
+                        <div class="lock-pulse-ring"></div>
+                        <div class="lock-icon" id="lock-icon-element">🔒</div>
+                    </div>
+                    
+                    <h2 class="lock-title">A little surprise is waiting for you...</h2>
+                    <p class="lock-subtitle">Someone prepared something special for you ❤️</p>
+
+                    <div class="lock-form">
+                        <div class="form-group">
+                            <input type="password" id="input-recipient-password" class="form-control text-center" placeholder="Enter your secret password..." autocomplete="off">
+                        </div>
+                        <button class="btn btn-gradient btn-block btn-lg" id="btn-unlock-surprise" onclick="recipient.attemptUnlock()">
+                            Unlock Surprise ✨
+                        </button>
+                        <p id="lock-error-msg" class="lock-error-msg"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STAGE 2: UNLOCK ANIMATION & GREETING -->
+            <div id="rec-stage-unlocking" class="recipient-stage">
+                <div class="unlocking-card text-center">
+                    <div class="animated-heart-box" id="animated-heart-character">
+                        💖
+                    </div>
+                    <h2 class="unlock-anim-text" id="unlock-anim-text">Unlocking your surprise...</h2>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="unlock-progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STAGE 3: PERSONAL GREETING INTRO -->
+            <div id="rec-stage-intro" class="recipient-stage">
+                <div class="intro-card glass-panel text-center">
+                    <div class="floating-balloon-icon">🎈</div>
+                    <h1 class="greeting-heading" id="lbl-rec-greeting">Have a beautiful day, <span class="gradient-text" id="lbl-rec-name">Sarah</span> ❤️</h1>
+                    <p class="greeting-subtext" id="lbl-rec-subtext">"There is something I want you to know..."</p>
+                    
+                    <div class="intro-cta">
+                        <button class="btn btn-gradient btn-lg pulse-glow" onclick="recipient.nextStage('memories')">
+                            START ✨
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STAGE 4: MEMORIES CAROUSEL -->
+            <div id="rec-stage-memories" class="recipient-stage">
+                <div class="memories-container glass-panel">
+                    <div class="memories-header">
+                        <h2>Our Memories 💕</h2>
+                        <p class="memories-counter" id="memories-counter-badge">1 / 3</p>
+                    </div>
+
+                    <!-- Slide Card Display -->
+                    <div class="memory-card-viewport">
+                        <div class="memory-card" id="active-memory-card">
+                            <div class="memory-image-box">
+                                <img id="img-memory-current" src="" alt="Memory Photo">
+                            </div>
+                            <div class="memory-caption-box">
+                                <p id="lbl-memory-caption" class="memory-caption-text">"That beautiful day..."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Controls -->
+                    <div class="memory-controls">
+                        <button class="btn btn-circle" onclick="recipient.prevMemory()">
+                            <i data-lucide="chevron-left"></i>
+                        </button>
+                        <div class="memory-dots" id="memory-dots-container"></div>
+                        <button class="btn btn-circle" onclick="recipient.nextMemory()">
+                            <i data-lucide="chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="memory-footer-action">
+                        <button class="btn btn-gradient btn-lg" onclick="recipient.nextStage('envelope')">
+                            💌 OPEN MY MESSAGE
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STAGE 5: INTERACTIVE ENVELOPE -->
+            <div id="rec-stage-envelope" class="recipient-stage">
+                <div class="envelope-scene-container text-center">
+                    <h2 class="envelope-prompt-text">💌 A message for you</h2>
+                    <p class="envelope-subprompt">Tap the envelope to open</p>
+
+                    <!-- Interactive 3D Envelope -->
+                    <div class="envelope-wrapper" id="envelope-wrapper" onclick="recipient.openEnvelope()">
+                        <div class="envelope-back"></div>
+                        <div class="letter-preview" id="letter-slide-out">
+                            <div class="letter-paper-mini">
+                                <span class="mini-heart">❤️</span>
+                            </div>
+                        </div>
+                        <div class="envelope-front"></div>
+                        <div class="envelope-top-flap" id="envelope-flap"></div>
+                        <div class="envelope-seal" id="envelope-seal">
+                            <span>❤️</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STAGE 6: HEARTFELT LETTER REVEAL -->
+            <div id="rec-stage-letter" class="recipient-stage">
+                <div class="letter-modal-container">
+                    <div class="handwritten-letter-paper glass-paper" id="handwritten-paper">
+                        <div class="letter-stamp">💌</div>
+                        <h2 class="letter-recipient-title" id="lbl-letter-to">To my beautiful mom ❤️</h2>
+                        
+                        <div class="letter-body-content" id="lbl-letter-body">
+                            <!-- Populated with creator's custom message -->
+                        </div>
+
+                        <div class="letter-signature-block">
+                            <p class="signature-text">Made especially for you by</p>
+                            <h3 class="signature-name" id="lbl-letter-from">Lightness ❤️</h3>
+                        </div>
+
+                        <!-- Reaction Note Input Box -->
+                        <div class="reaction-reply-box">
+                            <p class="reply-title">Leave a quick reaction for the creator: 😊</p>
+                            <div class="reply-input-group">
+                                <input type="text" id="input-recipient-reaction" class="form-control" placeholder="e.g. This made me smile so much! ❤️">
+                                <button class="btn btn-secondary btn-sm" onclick="recipient.saveReactionNote()">Send Note</button>
+                            </div>
+                            <p id="lbl-reaction-status" class="reaction-status-msg"></p>
+                        </div>
+
+                        <div class="letter-actions-bar">
+                            <button class="btn btn-ghost btn-sm" onclick="recipient.replaySurprise()">
+                                <i data-lucide="rotate-ccw"></i> Replay Surprise
+                            </button>
+                            <button class="btn btn-whatsapp btn-sm" onclick="recipient.sendThankYouWhatsApp()">
+                                <i data-lucide="heart"></i> Send Thank You Back
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- Application JavaScript Modules -->
+    <script src="js/audio.js"></script>
+    <script src="js/themes.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/creator.js"></script>
+    <script src="js/recipient.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
