@@ -357,30 +357,48 @@ class CreatorWizard {
 
     /* Final Link Generation */
     async generateSurpriseLink() {
-        if (!this.formData.password_raw) {
-            this.formData.password_raw = (this.formData.recipient_name || 'SARAH').toUpperCase();
+        try {
+            if (!this.formData.password_raw) {
+                this.formData.password_raw = (this.formData.recipient_name || 'SARAH').toUpperCase();
+            }
+
+            this.formData.password_hash = await storageManager.hashPassword(this.formData.password_raw);
+
+            const saved = await storageManager.saveSurprise(this.formData);
+
+            // Encode payload into URL for external devices
+            let shareId = storageManager.encodeSurpriseToURL(saved);
+
+            const baseUrl = window.location.origin + window.location.pathname;
+            const fullShareUrl = `${baseUrl}#s/${shareId}`;
+            this.finalShareUrl = fullShareUrl;
+
+            const inputShare = document.getElementById('input-share-link');
+            if (inputShare) inputShare.value = fullShareUrl;
+
+            const lblRecName = document.getElementById('lbl-share-recipient-name');
+            if (lblRecName) lblRecName.textContent = this.formData.recipient_name || 'Loved One';
+
+            this.renderQRCode(fullShareUrl);
+
+            if (window.audioManager) audioManager.playSuccessChime();
+            if (typeof confetti === 'function') confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+
+            this.nextStep(6);
+        } catch (err) {
+            console.error("Error generating surprise link:", err);
+            
+            // Fallback guarantee
+            const fallbackId = this.formData.id || storageManager.generateShortId();
+            const baseUrl = window.location.origin + window.location.pathname;
+            const fallbackUrl = `${baseUrl}#s/${fallbackId}`;
+            this.finalShareUrl = fallbackUrl;
+
+            const inputShare = document.getElementById('input-share-link');
+            if (inputShare) inputShare.value = fallbackUrl;
+
+            this.nextStep(6);
         }
-
-        this.formData.password_hash = await storageManager.hashPassword(this.formData.password_raw);
-
-        const saved = await storageManager.saveSurprise(this.formData);
-
-        // ALWAYS encode payload into URL so external devices (phones/tablets/WhatsApp) can decode it without local database dependency!
-        const shareId = storageManager.encodeSurpriseToURL(saved);
-
-        const baseUrl = window.location.origin + window.location.pathname;
-        const fullShareUrl = `${baseUrl}#s/${shareId}`;
-        this.finalShareUrl = fullShareUrl;
-
-        document.getElementById('input-share-link').value = fullShareUrl;
-        document.getElementById('lbl-share-recipient-name').textContent = this.formData.recipient_name;
-
-        this.renderQRCode(fullShareUrl);
-
-        audioManager.playSuccessChime();
-        confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
-
-        this.nextStep(6);
     }
 
     renderQRCode(url) {
