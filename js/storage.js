@@ -214,14 +214,12 @@ class StorageManager {
 
     encodeSurpriseToURL(surpriseData) {
         try {
-            // Keep memory items lightweight to avoid exceeding WhatsApp URL limits (~2000 chars)
             const sanitizedMemories = (surpriseData.memories || []).map(m => {
-                let url = m.url || '';
-                // If it's a huge base64 data URL, ensure it doesn't blow up link size
-                if (url.length > 2000) {
-                    url = url.substring(0, 500) + '...'; // Truncate huge data URL if uncompressed
-                }
-                return { url: url, caption: m.caption || '' };
+                return {
+                    url: m.url || '',
+                    caption: m.caption || '',
+                    focus: m.focus || 'center'
+                };
             });
 
             const compact = {
@@ -254,6 +252,7 @@ class StorageManager {
     }
 
     decodeCompactPayload(compact) {
+        const rawMemories = compact.imgs || compact.memories || [];
         return {
             id: compact.id,
             recipient_name: compact.n || compact.recipient_name || '',
@@ -266,7 +265,11 @@ class StorageManager {
             music_track: compact.s || compact.music_track || 'piano',
             password_hash: compact.ph || compact.password_hash || '',
             password_raw: compact.pr || compact.password_raw || '',
-            memories: compact.imgs || compact.memories || []
+            memories: rawMemories.map(m => ({
+                url: m.url || '',
+                caption: m.caption || '',
+                focus: m.focus || 'center'
+            }))
         };
     }
 }
