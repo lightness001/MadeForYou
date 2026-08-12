@@ -28,23 +28,34 @@ class AppController {
     /* Router handler */
     async handleRouting() {
         const hash = window.location.hash.trim();
+        const search = window.location.search.trim();
 
-        if (hash.startsWith('#s/')) {
-            const surpriseId = hash.replace('#s/', '');
-            if (surpriseId) {
-                let surpriseData = await storageManager.getSurprise(surpriseId);
-                
-                if (!surpriseData && surpriseId.startsWith('payload_')) {
-                    const compactData = storageManager.decodeCompactPayload({ id: surpriseId });
-                    surpriseData = compactData;
-                }
+        let surpriseId = '';
+        if (hash.includes('/s/')) {
+            surpriseId = hash.substring(hash.indexOf('/s/') + 3);
+        } else if (hash.includes('#s/')) {
+            surpriseId = hash.substring(hash.indexOf('#s/') + 3);
+        } else if (search.includes('s=')) {
+            const params = new URLSearchParams(search);
+            surpriseId = params.get('s') || '';
+        }
 
-                if (surpriseData) {
-                    this.loadSurpriseData(surpriseData, false);
-                    return;
-                } else {
-                    this.showToast('Surprise link not found or expired 💔', 'error');
-                }
+        // Clean up surpriseId: strip trailing slashes, spaces, or query parameters
+        surpriseId = surpriseId.trim().replace(/\/+$/, '').split('?')[0].split('&')[0];
+
+        if (surpriseId) {
+            let surpriseData = await storageManager.getSurprise(surpriseId);
+            
+            if (!surpriseData && surpriseId.startsWith('payload_')) {
+                const compactData = storageManager.decodeCompactPayload({ id: surpriseId });
+                surpriseData = compactData;
+            }
+
+            if (surpriseData) {
+                this.loadSurpriseData(surpriseData, false);
+                return;
+            } else {
+                this.showToast('Surprise link not found or expired 💔', 'error');
             }
         } else if (hash === '#create') {
             this.startCreator();

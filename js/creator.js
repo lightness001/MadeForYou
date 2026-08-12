@@ -196,7 +196,7 @@ class CreatorWizard {
         files.forEach((file) => {
             const reader = new FileReader();
             reader.onload = (e) => {
-                this.compressImage(e.target.result, 800, 0.75, (compressedDataUrl) => {
+                this.compressImage(e.target.result, 500, 0.55, (compressedDataUrl) => {
                     this.formData.memories.push({
                         id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
                         url: compressedDataUrl,

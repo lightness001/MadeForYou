@@ -14,9 +14,12 @@ CREATE TABLE IF NOT EXISTS surprises (
     relationship VARCHAR(50) DEFAULT 'My Love',
     occasion VARCHAR(50) DEFAULT 'Love',
     password_hash TEXT NOT NULL,
+    password_raw TEXT DEFAULT '',
     message TEXT NOT NULL,
     font_family VARCHAR(50) DEFAULT 'Dancing Script',
     theme VARCHAR(50) DEFAULT 'love',
+    music_track VARCHAR(50) DEFAULT 'piano',
+    reaction_note TEXT DEFAULT '',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     expires_at TIMESTAMP WITH TIME ZONE NULL
 );
@@ -39,7 +42,7 @@ CREATE INDEX IF NOT EXISTS idx_memories_surprise_id ON memories(surprise_id);
 ALTER TABLE surprises ENABLE ROW LEVEL SECURITY;
 ALTER TABLE memories ENABLE ROW LEVEL SECURITY;
 
--- Allow public read access to surprises by short_code / id
+-- Allow public read access to surprises
 CREATE POLICY "Allow public read access for surprises"
     ON surprises FOR SELECT
     USING (true);
@@ -48,6 +51,11 @@ CREATE POLICY "Allow public read access for surprises"
 CREATE POLICY "Allow public insert for surprises"
     ON surprises FOR INSERT
     WITH CHECK (true);
+
+-- Allow public updates (e.g. saving recipient reaction notes)
+CREATE POLICY "Allow public update for surprises"
+    ON surprises FOR UPDATE
+    USING (true);
 
 -- Allow public read access for memories
 CREATE POLICY "Allow public read access for memories"

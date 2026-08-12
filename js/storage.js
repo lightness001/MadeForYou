@@ -9,6 +9,13 @@ class StorageManager {
         this.dbVersion = 1;
         this.db = null;
         this.initIndexedDB();
+
+        // Optional Supabase Realtime Database Integration
+        this.supabaseUrl = window.SUPABASE_URL || '';
+        this.supabaseKey = window.SUPABASE_ANON_KEY || '';
+        this.supabase = (window.supabase && this.supabaseUrl && this.supabaseKey)
+            ? window.supabase.createClient(this.supabaseUrl, this.supabaseKey)
+            : null;
     }
 
     initIndexedDB() {
@@ -77,27 +84,50 @@ class StorageManager {
             localStorage.setItem('mfy_surprise_ids', JSON.stringify(ids));
         }
 
+        // Sync to Supabase cloud database if configured
+        if (this.supabase) {
+            try {
+                await this.supabase.from('surprises').upsert({
+                    id: surpriseData.id,
+                    short_code: surpriseData.id,
+                    recipient_name: surpriseData.recipient_name,
+                    creator_name: surpriseData.creator_name,
+                    relationship: surpriseData.relationship,
+                    occasion: surpriseData.occasion,
+                    password_hash: surpriseData.password_hash,
+                    password_raw: surpriseData.password_raw || '',
+                    message: surpriseData.message,
+                    font_family: surpriseData.font_family,
+                    theme: surpriseData.theme,
+                    music_track: surpriseData.music_track,
+                    reaction_note: surpriseData.reaction_note || '',
+                    created_at: surpriseData.created_at
+                });
+            } catch (e) {
+                console.warn("Supabase DB sync warning:", e);
+            }
+        }
+
         return surpriseData;
     }
 
     async getSurprise(id) {
         if (!id) return null;
 
+        // Clean id string from trailing slashes, spaces, or query parameters
+        id = id.trim().replace(/\/+$/, '').split('?')[0].split('&')[0];
+
         // Handle URL-safe Payload
         if (id.startsWith('payload_')) {
             try {
                 let base64Data = id.replace('payload_', '');
-                // Handle URL decoding if browser encoded characters
                 base64Data = decodeURIComponent(base64Data);
-                // Restore URL-safe characters (- to +, _ to /)
                 base64Data = base64Data.replace(/-/g, '+').replace(/_/g, '/');
                 
-                // Add padding if missing
                 while (base64Data.length % 4 !== 0) {
                     base64Data += '=';
                 }
 
-                // Decode UTF-8 string from Base64
                 const jsonStr = decodeURIComponent(Array.prototype.map.call(atob(base64Data), (c) => {
                     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
                 }).join(''));
@@ -125,6 +155,16 @@ class StorageManager {
                 req.onerror = () => resolve(null);
             });
             if (fromIDB) return fromIDB;
+        }
+
+        // Handle Supabase lookup
+        if (this.supabase) {
+            try {
+                const { data } = await this.supabase.from('surprises').select('*').eq('id', id).single();
+                if (data) return data;
+            } catch (e) {
+                console.warn("Supabase fetch warning:", e);
+            }
         }
 
         return null;
@@ -162,10 +202,28 @@ class StorageManager {
         let ids = JSON.parse(localStorage.getItem('mfy_surprise_ids') || '[]');
         ids = ids.filter(i => i !== id);
         localStorage.setItem('mfy_surprise_ids', JSON.stringify(ids));
+
+        if (this.supabase) {
+            try {
+                await this.supabase.from('surprises').delete().eq('id', id);
+            } catch (e) {
+                console.warn("Supabase delete warning:", e);
+            }
+        }
     }
 
     encodeSurpriseToURL(surpriseData) {
         try {
+            // Keep memory items lightweight to avoid exceeding WhatsApp URL limits (~2000 chars)
+            const sanitizedMemories = (surpriseData.memories || []).map(m => {
+                let url = m.url || '';
+                // If it's a huge base64 data URL, ensure it doesn't blow up link size
+                if (url.length > 2000) {
+                    url = url.substring(0, 500) + '...'; // Truncate huge data URL if uncompressed
+                }
+                return { url: url, caption: m.caption || '' };
+            });
+
             const compact = {
                 id: surpriseData.id,
                 n: surpriseData.recipient_name,
@@ -178,16 +236,14 @@ class StorageManager {
                 s: surpriseData.music_track || 'piano',
                 ph: surpriseData.password_hash,
                 pr: surpriseData.password_raw || '',
-                imgs: surpriseData.memories || []
+                imgs: sanitizedMemories
             };
             const jsonStr = JSON.stringify(compact);
             
-            // Encode to UTF-8 Base64
             let base64 = btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g, (match, p1) => {
                 return String.fromCharCode('0x' + p1);
             }));
 
-            // Make URL-Safe (replace + with -, / with _, remove =)
             base64 = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
             
             return `payload_${base64}`;
