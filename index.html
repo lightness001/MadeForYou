@@ -9,7 +9,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Cinzel:wght@600;700&family=Montserrat:wght@700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -213,14 +213,6 @@
                                 <span class="opt-icon">👔</span>
                                 <span class="opt-text">My Father</span>
                             </div>
-                            <div class="option-card" data-value="My Daughter" data-icon="👧">
-                                <span class="opt-icon">👧</span>
-                                <span class="opt-text">My Daughter</span>
-                            </div>
-                            <div class="option-card" data-value="My Son" data-icon="👦">
-                                <span class="opt-icon">👦</span>
-                                <span class="opt-text">My Son</span>
-                            </div>
                             <div class="option-card" data-value="My Sister" data-icon="👭">
                                 <span class="opt-icon">👭</span>
                                 <span class="opt-text">My Sister</span>
@@ -229,16 +221,48 @@
                                 <span class="opt-icon">👦</span>
                                 <span class="opt-text">My Brother</span>
                             </div>
+                            <div class="option-card" data-value="My Aunt" data-icon="🌺">
+                                <span class="opt-icon">🌺</span>
+                                <span class="opt-text">My Aunt</span>
+                            </div>
+                            <div class="option-card" data-value="My Uncle" data-icon="👨‍💼">
+                                <span class="opt-icon">👨‍💼</span>
+                                <span class="opt-text">My Uncle</span>
+                            </div>
+                            <div class="option-card" data-value="Grandmother" data-icon="👵">
+                                <span class="opt-icon">👵</span>
+                                <span class="opt-text">Grandmother</span>
+                            </div>
+                            <div class="option-card" data-value="Grandfather" data-icon="👴">
+                                <span class="opt-icon">👴</span>
+                                <span class="opt-text">Grandfather</span>
+                            </div>
+                            <div class="option-card" data-value="My Daughter" data-icon="👧">
+                                <span class="opt-icon">👧</span>
+                                <span class="opt-text">My Daughter</span>
+                            </div>
+                            <div class="option-card" data-value="My Son" data-icon="👦">
+                                <span class="opt-icon">👦</span>
+                                <span class="opt-text">My Son</span>
+                            </div>
                             <div class="option-card" data-value="My Friend" data-icon="🤝">
                                 <span class="opt-icon">🤝</span>
                                 <span class="opt-text">My Friend</span>
+                            </div>
+                            <div class="option-card" data-value="My Cousin" data-icon="💫">
+                                <span class="opt-icon">💫</span>
+                                <span class="opt-text">My Cousin</span>
+                            </div>
+                            <div class="option-card" data-value="Workmate / Partner" data-icon="💼">
+                                <span class="opt-icon">💼</span>
+                                <span class="opt-text">Workmate / Partner</span>
                             </div>
                             <div class="option-card" data-value="Someone Special" data-icon="✨">
                                 <span class="opt-icon">✨</span>
                                 <span class="opt-text">Someone Special</span>
                             </div>
-                            <div class="option-card" data-value="Other" data-icon="💫">
-                                <span class="opt-icon">💫</span>
+                            <div class="option-card" data-value="Other" data-icon="🌟">
+                                <span class="opt-icon">🌟</span>
                                 <span class="opt-text">Other</span>
                             </div>
                         </div>
@@ -314,9 +338,12 @@
                             <button class="toolbar-btn" onclick="creator.insertEmoji('🥺')" title="Add Emotion">🥺</button>
                             <div class="toolbar-divider"></div>
                             <select id="select-font-family" class="toolbar-select" onchange="creator.updateFontFamily(this.value)">
-                                <option value="Dancing Script">Font: Dancing Script (Handwritten)</option>
+                                <option value="Montserrat">Font: Montserrat (Extra Bold Modern)</option>
+                                <option value="Times New Roman">Font: Times New Roman (Classic Serif)</option>
+                                <option value="Playfair Display">Font: Playfair Display (Elegant Romance)</option>
+                                <option value="Dancing Script" selected>Font: Dancing Script (Handwritten)</option>
                                 <option value="Caveat">Font: Caveat (Casual Note)</option>
-                                <option value="Cinzel">Font: Cinzel (Classic Serif)</option>
+                                <option value="Cinzel">Font: Cinzel (Royal Classic)</option>
                                 <option value="Outfit">Font: Outfit (Modern Sans)</option>
                             </select>
                         </div>

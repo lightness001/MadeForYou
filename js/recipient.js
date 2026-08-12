@@ -185,7 +185,24 @@ class RecipientJourney {
         const badge = document.getElementById('memories-counter-badge');
         const dotsContainer = document.getElementById('memory-dots-container');
 
-        if (img) img.src = item.url;
+        if (img) {
+            img.src = item.url;
+            const focus = item.focus || 'center';
+            if (focus === 'top') {
+                img.style.objectFit = 'cover';
+                img.style.objectPosition = 'top center';
+            } else if (focus === 'bottom') {
+                img.style.objectFit = 'cover';
+                img.style.objectPosition = 'bottom center';
+            } else if (focus === 'contain') {
+                img.style.objectFit = 'contain';
+                img.style.objectPosition = 'center center';
+                img.style.background = '#0f0a1c';
+            } else {
+                img.style.objectFit = 'cover';
+                img.style.objectPosition = 'center center';
+            }
+        }
         if (caption) caption.textContent = item.caption || 'A special moment ❤️';
         if (badge) badge.textContent = `${this.currentMemoryIndex + 1} / ${memories.length}`;
 

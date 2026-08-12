@@ -261,19 +261,48 @@ class CreatorWizard {
             return;
         }
 
-        container.innerHTML = this.formData.memories.map((item, idx) => `
+        container.innerHTML = this.formData.memories.map((item, idx) => {
+            const currentFocus = item.focus || 'center';
+            return `
             <div class="memory-item-card">
                 <div class="memory-thumb-box">
-                    <img src="${item.url}" alt="Memory photo ${idx + 1}">
+                    <img src="${item.url}" alt="Memory photo ${idx + 1}" style="${this.getPhotoStyle(currentFocus)}">
                     <button class="memory-delete-btn" onclick="creator.deleteMemory(${idx})" title="Remove Photo">
                         ✕
                     </button>
                 </div>
+                <div class="memory-focus-bar">
+                    <span class="focus-label">Focus:</span>
+                    <button type="button" class="btn-focus ${currentFocus === 'top' ? 'active' : ''}" onclick="creator.updateMemoryFocus(${idx}, 'top')" title="Show Head / Top">👤 Head</button>
+                    <button type="button" class="btn-focus ${currentFocus === 'center' ? 'active' : ''}" onclick="creator.updateMemoryFocus(${idx}, 'center')" title="Center">🎯 Center</button>
+                    <button type="button" class="btn-focus ${currentFocus === 'bottom' ? 'active' : ''}" onclick="creator.updateMemoryFocus(${idx}, 'bottom')" title="Show Feet / Bottom">🦶 Feet</button>
+                    <button type="button" class="btn-focus ${currentFocus === 'contain' ? 'active' : ''}" onclick="creator.updateMemoryFocus(${idx}, 'contain')" title="Squeeze Full Photo">🖼️ Squeeze</button>
+                </div>
                 <div class="memory-caption-input">
-                    <input type="text" class="form-control" value="${item.caption}" placeholder="Add a caption..." oninput="creator.updateMemoryCaption(${idx}, this.value)">
+                    <input type="text" class="form-control" value="${item.caption || ''}" placeholder="Add a caption..." oninput="creator.updateMemoryCaption(${idx}, this.value)">
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
+    }
+
+    getPhotoStyle(focus) {
+        if (focus === 'top') {
+            return 'object-fit: cover; object-position: top center;';
+        } else if (focus === 'bottom') {
+            return 'object-fit: cover; object-position: bottom center;';
+        } else if (focus === 'contain') {
+            return 'object-fit: contain; object-position: center center; background: #000;';
+        } else {
+            return 'object-fit: cover; object-position: center center;';
+        }
+    }
+
+    updateMemoryFocus(index, focusVal) {
+        if (this.formData.memories[index]) {
+            this.formData.memories[index].focus = focusVal;
+            this.renderMemoriesList();
+        }
     }
 
     deleteMemory(index) {

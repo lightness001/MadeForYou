@@ -964,6 +964,43 @@ body {
     justify-content: center;
 }
 
+.memory-focus-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.6rem;
+    background: rgba(0, 0, 0, 0.4);
+    border-bottom: 1px solid var(--border-card);
+    flex-wrap: wrap;
+}
+
+.focus-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.btn-focus {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-card);
+    color: #ffffff;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-focus:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-focus.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 8px var(--primary-glow);
+}
+
 .memory-caption-input {
     padding: 0.6rem;
 }

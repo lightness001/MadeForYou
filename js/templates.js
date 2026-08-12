@@ -40,12 +40,44 @@ const SURPRISE_TEMPLATES = {
     "My Sister": {
         "Love": "To my dearest sister, you are not just family, you're my best friend for life. Thank you for all the shared memories and laughter! 👭❤️",
         "Birthday": "Happy Birthday sister! 🎂 From secret keeping to endless laughs, life is so much brighter with you in it. Celebrate big today! 🎉",
-        "Thank You": "Thank you for always having my back, giving the best advice, and being someone I can always count on. You're the best! 🙏💖"
+        "Thank You": "Thank you for always having my back, giving the best advice, and being someone I can always count on. You're the best! 🙏💖",
+        "I Miss You": "Missing my favorite sister so much! Can't wait until our next hangout and endless chat session. Sending you huge hugs! 🥹🌸"
     },
     "My Brother": {
         "Love": "To my brother, thank you for all the good times, jokes, and support over the years. Honored to have you in my corner. 👦🔥",
         "Birthday": "Happy Birthday Bro! 🎂 Wishing you success, health, and epic moments this year. Let's make it unforgettable!",
-        "Thank You": "Thanks for being a reliable brother and always stepping up when needed. Really appreciate you, man! 🙏"
+        "Thank You": "Thanks for being a reliable brother and always stepping up when needed. Really appreciate you, man! 🙏",
+        "Courage": "Keep your head up bro! Whatever is testing you right now, I know you have the strength and grit to push right through it. Stay focused! 💪"
+    },
+    "My Aunt": {
+        "Love": "To my wonderful Aunt, your warmth, kindness, and cheerful smile always bring so much joy into our family. Thank you for being so amazing! 🌺❤️",
+        "Birthday": "Happy Birthday to my dearest Aunt! 🎂 Wishing you endless health, love, and laughter on your special day!",
+        "Thank You": "Thank you Auntie for your endless generosity, wisdom, and love. I am so lucky to have you in my life! 🙏✨"
+    },
+    "My Uncle": {
+        "Love": "To my awesome Uncle, thank you for always bringing wisdom, laughter, and great energy whenever we meet. Appreciate you! 👨‍💼❤️",
+        "Birthday": "Happy Birthday Uncle! 🎂 May your new age bring grand success, happiness, and great health!",
+        "Thank You": "Thank you Uncle for your constant support, guidance, and encouragement over the years! Respect always! 🙏"
+    },
+    "Grandmother": {
+        "Love": "To my sweet Grandmother, your gentle heart and loving stories are the treasure of our family. I love you so much! 👵❤️",
+        "Birthday": "Happy Birthday Grandma! 🎂 May God bless you with abundant health, peace, and pure happiness today!",
+        "Thank You": "Thank you Grandma for all your prayers, warm meals, and infinite love. You are our family's blessing! 🌸"
+    },
+    "Grandfather": {
+        "Love": "To my wise Grandfather, thank you for all the lessons, warmth, and strength you have given our family over the years. 👴❤️",
+        "Birthday": "Happy Birthday Grandpa! 🎂 Wishing you strength, peace, and a joyful celebration surrounded by love!",
+        "Thank You": "Thank you Grandpa for your wisdom, kindness, and life lessons. Proud to be your grandchild! 🙏"
+    },
+    "My Cousin": {
+        "Love": "To my awesome cousin, growing up with you and sharing so many funny moments has been a true blessing. Always got your back! 💫❤️",
+        "Birthday": "Happy Birthday Cousin! 🎂 Hope your day is filled with epic celebrations, good music, and great vibes!",
+        "Thank You": "Thanks for being such a cool cousin and great friend. Always fun times whenever we hang out! 🙏"
+    },
+    "Workmate / Partner": {
+        "Love": "To my great work partner, thank you for making every project smoother and every day at work more enjoyable! 💼✨",
+        "Birthday": "Happy Birthday! 🎂 Wishing you career breakthroughs, joy, and peace in this exciting new age!",
+        "Thank You": "Thank you for your fantastic teamwork, dedication, and support. Working with you is a pleasure! 🙏"
     },
     "My Friend": {
         "Love": "Good friends are like stars—you don't always see them, but you know they're always there. Thank you for being such a genuine friend! 🤝❤️",
@@ -66,6 +98,5 @@ function getTemplateFor(relationship, occasion) {
     if (SURPRISE_TEMPLATES[relationship] && SURPRISE_TEMPLATES[relationship][occasion]) {
         return SURPRISE_TEMPLATES[relationship][occasion];
     }
-    // Generic Fallback
     return `Dearest ${relationship || 'friend'},\n\nI just wanted to take a moment to send you this little surprise and remind you how special you are to me. Thank you for bringing so much brightness, love, and joy into my life. I appreciate you more than words can say! ❤️`;
 }
