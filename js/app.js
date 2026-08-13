@@ -31,10 +31,12 @@ class AppController {
         const search = window.location.search.trim();
 
         let surpriseId = '';
-        if (hash.includes('/s/')) {
+        if (hash.startsWith('#s/')) {
+            surpriseId = hash.substring(3);
+        } else if (hash.startsWith('#/s/')) {
+            surpriseId = hash.substring(4);
+        } else if (hash.includes('/s/')) {
             surpriseId = hash.substring(hash.indexOf('/s/') + 3);
-        } else if (hash.includes('#s/')) {
-            surpriseId = hash.substring(hash.indexOf('#s/') + 3);
         } else if (search.includes('s=')) {
             const params = new URLSearchParams(search);
             surpriseId = params.get('s') || '';
