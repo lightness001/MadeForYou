@@ -44,19 +44,12 @@ class AppController {
         surpriseId = surpriseId.trim().replace(/\/+$/, '').split('?')[0].split('&')[0];
 
         if (surpriseId) {
-            let surpriseData = await storageManager.getSurprise(surpriseId);
-            
-            if (!surpriseData && surpriseId.startsWith('payload_')) {
-                const compactData = storageManager.decodeCompactPayload({ id: surpriseId });
-                surpriseData = compactData;
+            this.navigate('recipient');
+            const res = await recipient.verifyAndLoadSurprise(surpriseId);
+            if (!res.success) {
+                recipient.showErrorStage(res.reason, res.title, res.details);
             }
-
-            if (surpriseData) {
-                this.loadSurpriseData(surpriseData, false);
-                return;
-            } else {
-                this.showToast('Surprise link not found or expired 💔', 'error');
-            }
+            return;
         } else if (hash === '#create') {
             this.startCreator();
             return;

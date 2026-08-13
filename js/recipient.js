@@ -24,6 +24,93 @@ class RecipientJourney {
         this.bindTouchParticleSpawner();
     }
 
+    /* Diagnostic Verification Flow */
+    async verifyAndLoadSurprise(surpriseId) {
+        if (!surpriseId) {
+            return {
+                success: false,
+                reason: 'invalid_link',
+                title: 'Invalid link',
+                details: 'This surprise could not be found. Please check that the link was copied correctly.'
+            };
+        }
+
+        // Step 1: Does short_code / payload exist?
+        let surpriseData = await storageManager.getSurprise(surpriseId);
+        
+        if (!surpriseData && surpriseId.startsWith('payload_')) {
+            try {
+                const compactData = storageManager.decodeCompactPayload({ id: surpriseId });
+                if (compactData && (compactData.message || compactData.recipient_name)) {
+                    surpriseData = compactData;
+                }
+            } catch (e) {
+                console.warn("Payload decode error:", e);
+            }
+        }
+
+        if (!surpriseData) {
+            return {
+                success: false,
+                reason: 'invalid_link',
+                title: 'Invalid link',
+                details: 'This surprise could not be found. Please check that the link was copied correctly.'
+            };
+        }
+
+        // Step 2: Is status = active?
+        if (surpriseData.status === 'inactive' || surpriseData.is_active === false || surpriseData.closed === true) {
+            return {
+                success: false,
+                reason: 'inactive',
+                title: 'Surprise Inactive',
+                details: 'This surprise has been closed by its creator.'
+            };
+        }
+
+        // Step 3: Has it expired?
+        if (surpriseData.expires_at) {
+            const expDate = new Date(surpriseData.expires_at);
+            if (!isNaN(expDate.getTime()) && new Date() > expDate) {
+                return {
+                    success: false,
+                    reason: 'expired',
+                    title: 'Surprise Expired',
+                    details: 'This surprise is no longer available. The creator set an expiration date for this link.'
+                };
+            }
+        }
+
+        // Valid data found! Proceed to initialization
+        this.init(surpriseData, false);
+        return { success: true };
+    }
+
+    showErrorStage(reason, title, details) {
+        this.showStage('error');
+        const iconEl = document.getElementById('error-stage-icon');
+        const titleEl = document.getElementById('error-stage-title');
+        const msgEl = document.getElementById('error-stage-msg');
+
+        if (reason === 'invalid_link') {
+            if (iconEl) iconEl.textContent = '🔍';
+            if (titleEl) titleEl.textContent = title || 'Invalid link';
+            if (msgEl) msgEl.textContent = details || 'This surprise could not be found. Please check that the link was copied correctly.';
+        } else if (reason === 'inactive') {
+            if (iconEl) iconEl.textContent = '🔒';
+            if (titleEl) titleEl.textContent = title || 'Surprise Inactive';
+            if (msgEl) msgEl.textContent = details || 'This surprise has been closed by its creator.';
+        } else if (reason === 'expired') {
+            if (iconEl) iconEl.textContent = '⏳';
+            if (titleEl) titleEl.textContent = title || 'Surprise Expired';
+            if (msgEl) msgEl.textContent = details || 'This surprise is no longer available. The creator set an expiration date for this link.';
+        } else {
+            if (iconEl) iconEl.textContent = '💔';
+            if (titleEl) titleEl.textContent = title || 'Surprise Unavailable';
+            if (msgEl) msgEl.textContent = details || 'This surprise could not be loaded.';
+        }
+    }
+
     bindLockEvents() {
         const passInput = document.getElementById('input-recipient-password');
         if (passInput) {
@@ -184,9 +271,13 @@ class RecipientJourney {
         const caption = document.getElementById('lbl-memory-caption');
         const badge = document.getElementById('memories-counter-badge');
         const dotsContainer = document.getElementById('memory-dots-container');
+        const banner = document.getElementById('memory-unavailable-banner');
+
+        if (banner) banner.style.display = 'none';
 
         if (img) {
-            img.src = item.url;
+            img.style.display = 'block';
+            img.src = item.url || '';
             const focus = item.focus || 'center';
             if (focus === 'top') {
                 img.style.objectFit = 'cover';
@@ -206,6 +297,11 @@ class RecipientJourney {
         if (caption) caption.textContent = item.caption || 'A special moment ❤️';
         if (badge) badge.textContent = `${this.currentMemoryIndex + 1} / ${memories.length}`;
 
+        // Check if image URL is empty or invalid
+        if (!item.url) {
+            this.handleImageError(img);
+        }
+
         if (dotsContainer) {
             dotsContainer.innerHTML = memories.map((_, i) => `
                 <div class="memory-dot ${i === this.currentMemoryIndex ? 'active' : ''}"></div>
@@ -218,6 +314,12 @@ class RecipientJourney {
             card.offsetHeight;
             card.style.animation = 'fadeInStage 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
         }
+    }
+
+    handleImageError(imgEl) {
+        if (imgEl) imgEl.style.display = 'none';
+        const banner = document.getElementById('memory-unavailable-banner');
+        if (banner) banner.style.display = 'flex';
     }
 
     nextMemory() {

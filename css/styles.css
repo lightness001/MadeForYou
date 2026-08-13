@@ -964,6 +964,37 @@ body {
     justify-content: center;
 }
 
+.memory-unavailable-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1.5rem;
+    background: rgba(15, 10, 28, 0.95);
+    border-radius: var(--radius-md);
+    text-align: center;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    min-height: 220px;
+    width: 100%;
+}
+
+.unavail-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.unavail-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.25rem;
+}
+
+.unavail-sub {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
 .memory-focus-bar {
     display: flex;
     align-items: center;

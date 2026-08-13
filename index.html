@@ -624,6 +624,29 @@
                 </button>
             </div>
 
+            <!-- DIAGNOSTIC ERROR & STATUS STAGE -->
+            <div id="rec-stage-error" class="recipient-stage">
+                <div class="lock-card glass-panel text-center">
+                    <div class="lock-icon-wrapper" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3);">
+                        <div class="lock-icon" id="error-stage-icon">💔</div>
+                    </div>
+                    
+                    <h2 class="lock-title" id="error-stage-title">Invalid Link</h2>
+                    <p class="lock-subtitle" id="error-stage-msg" style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                        This surprise could not be found. Please check that the link was copied correctly.
+                    </p>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <button class="btn btn-outline btn-block" onclick="window.location.reload()">
+                            <i data-lucide="refresh-cw"></i> Try Again
+                        </button>
+                        <button class="btn btn-primary btn-block" onclick="app.startCreator()">
+                            ✨ Create A New Surprise
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- STAGE 1: SECRET LOCK SCREEN -->
             <div id="rec-stage-lock" class="recipient-stage active">
                 <div class="lock-card glass-panel">
@@ -687,7 +710,12 @@
                     <div class="memory-card-viewport">
                         <div class="memory-card" id="active-memory-card">
                             <div class="memory-image-box">
-                                <img id="img-memory-current" src="" alt="Memory Photo">
+                                <img id="img-memory-current" src="" alt="Memory Photo" onerror="recipient.handleImageError(this)">
+                                <div id="memory-unavailable-banner" class="memory-unavailable-banner" style="display: none;">
+                                    <span class="unavail-icon">🖼️</span>
+                                    <h3 class="unavail-title">Memory unavailable</h3>
+                                    <p class="unavail-sub">One of the memories could not be loaded.</p>
+                                </div>
                             </div>
                             <div class="memory-caption-box">
                                 <p id="lbl-memory-caption" class="memory-caption-text">"That beautiful day..."</p>
