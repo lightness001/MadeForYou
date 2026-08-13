@@ -395,13 +395,8 @@ class CreatorWizard {
 
             const saved = await storageManager.saveSurprise(this.formData);
 
-            // If Supabase cloud database is connected, use short ID (#s/9TZ6ZB)!
-            let shareId = '';
-            if (storageManager.supabase) {
-                shareId = saved.id;
-            } else {
-                shareId = storageManager.encodeSurpriseToURL(saved);
-            }
+            // Generate self-contained payload URL so link works on ANY recipient device worldwide!
+            let shareId = storageManager.encodeSurpriseToURL(saved);
 
             const baseUrl = window.location.origin + window.location.pathname;
             const fullShareUrl = `${baseUrl}#s/${shareId}`;

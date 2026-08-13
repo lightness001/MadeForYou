@@ -273,10 +273,24 @@ class StorageManager {
             const jsonStr = JSON.stringify(compact);
             const base64 = this.utf8ToBase64(jsonStr);
             
-            return `payload_${base64}`;
+            if (base64) {
+                return `payload_${base64}`;
+            }
+
+            // Fallback: Encode text-only payload if memories were too large
+            const textOnlyCompact = { ...compact, imgs: [] };
+            const fallbackBase64 = this.utf8ToBase64(JSON.stringify(textOnlyCompact));
+            return `payload_${fallbackBase64}`;
         } catch (e) {
             console.error("Encoding error:", e);
-            return surpriseData.id;
+            const safeCompact = {
+                id: surpriseData.id || 'SP123',
+                n: surpriseData.recipient_name || '',
+                c: surpriseData.creator_name || 'Someone Special',
+                m: surpriseData.message || '',
+                pr: surpriseData.password_raw || ''
+            };
+            return `payload_${this.utf8ToBase64(JSON.stringify(safeCompact))}`;
         }
     }
 
