@@ -52,11 +52,26 @@ class StorageManager {
 
     async hashPassword(password) {
         if (!password) return '';
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password.trim().toLowerCase());
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        const clean = password.trim().toLowerCase();
+        try {
+            if (window.crypto && window.crypto.subtle) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(clean);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+        } catch (e) {
+            console.warn("Crypto hash fallback:", e);
+        }
+        // Simple fallback hash if crypto.subtle is unavailable
+        let hash = 0;
+        for (let i = 0; i < clean.length; i++) {
+            const char = clean.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash |= 0;
+        }
+        return 'hash_' + Math.abs(hash).toString(16);
     }
 
     async saveSurprise(surpriseData) {

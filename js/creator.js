@@ -417,15 +417,19 @@ class CreatorWizard {
         } catch (err) {
             console.error("Error generating surprise link:", err);
             
-            // Fallback guarantee
-            const fallbackId = this.formData.id || storageManager.generateShortId();
+            // Fallback guarantee: ALWAYS generate self-contained payload link!
+            const shareId = storageManager.encodeSurpriseToURL(this.formData);
             const baseUrl = window.location.origin + window.location.pathname;
-            const fallbackUrl = `${baseUrl}#s/${fallbackId}`;
+            const fallbackUrl = `${baseUrl}#s/${shareId}`;
             this.finalShareUrl = fallbackUrl;
 
             const inputShare = document.getElementById('input-share-link');
             if (inputShare) inputShare.value = fallbackUrl;
 
+            const lblRecName = document.getElementById('lbl-share-recipient-name');
+            if (lblRecName) lblRecName.textContent = this.formData.recipient_name || 'Loved One';
+
+            this.renderQRCode(fallbackUrl);
             this.nextStep(6);
         }
     }
