@@ -120,20 +120,10 @@ class StorageManager {
         // Handle URL-safe Payload
         if (id.startsWith('payload_')) {
             try {
-                let base64Data = id.replace('payload_', '');
-                base64Data = decodeURIComponent(base64Data);
-                base64Data = base64Data.replace(/-/g, '+').replace(/_/g, '/');
-                
-                while (base64Data.length % 4 !== 0) {
-                    base64Data += '=';
+                const compactObj = this.decodeCompactPayload(id);
+                if (compactObj && (compactObj.message || compactObj.recipient_name)) {
+                    return compactObj;
                 }
-
-                const jsonStr = decodeURIComponent(Array.prototype.map.call(atob(base64Data), (c) => {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-
-                const compactObj = JSON.parse(jsonStr);
-                return this.decodeCompactPayload(compactObj);
             } catch (e) {
                 console.error("Failed to parse URL payload:", e);
             }
