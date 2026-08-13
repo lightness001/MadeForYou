@@ -1,31 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MadeForYou ❤️ Create a Digital Surprise For Someone Special</title>
-    <meta name="description" content="Create a personalized, interactive digital surprise filled with photos, heartwarming messages, lock screens, custom themes, and background music for someone you love.">
-    
+    <meta name="description"
+        content="Create a personalized, interactive digital surprise filled with photos, heartwarming messages, lock screens, custom themes, and background music for someone you love.">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Cinzel:wght@600;700&family=Montserrat:wght@700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Cinzel:wght@600;700&family=Montserrat:wght@700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+        rel="stylesheet">
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <!-- Canvas Confetti CDN -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-    
+
     <!-- QR Code Generator CDN -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 
     <!-- Supabase JS Client (Optional backend sync) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        window.SUPABASE_URL = 'https://jpolzonhruwoeggwpvzg.supabase.co';
+        window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impwb2x6b25ocnV3b2VnZ3dwdnpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1MjE2MDMsImV4cCI6MjEwMjA5NzYwM30.kgSL66CP2ZGU5TZibN6CZW4ZoxW-IuZS_g4CRAoF8Yg';
+    </script>
 
     <!-- Application Stylesheets -->
     <link rel="stylesheet" href="css/styles.css?v=1.0.8">
 </head>
+
 <body data-theme="love">
 
     <!-- Background Dynamic Canvas -->
@@ -36,7 +45,7 @@
 
     <!-- Main App Container -->
     <div id="app" class="app-viewport">
-        
+
         <!-- HEADER / NAVIGATION -->
         <header id="main-header" class="main-header">
             <div class="logo" onclick="app.navigate('landing')">
@@ -62,9 +71,11 @@
                 <div class="badge-pill">
                     <span class="badge-sparkle">✨</span> Create Unforgettable Moments
                 </div>
-                <h1 class="hero-title">Create a little digital surprise for <span class="gradient-text">someone special</span></h1>
-                <p class="hero-subtitle">Turn your memories, heartwarming messages, and affection into a magical interactive experience protected with a password.</p>
-                
+                <h1 class="hero-title">Create a little digital surprise for <span class="gradient-text">someone
+                        special</span></h1>
+                <p class="hero-subtitle">Turn your memories, heartwarming messages, and affection into a magical
+                    interactive experience protected with a password.</p>
+
                 <div class="hero-cta-group">
                     <button class="btn btn-gradient btn-lg pulse-glow" onclick="app.startCreator()">
                         <i data-lucide="heart"></i> Create a Surprise Now
@@ -147,7 +158,7 @@
         <!-- ROUTE 3: CREATOR WIZARD -->
         <section id="view-creator" class="view-screen">
             <div class="wizard-container">
-                
+
                 <!-- Wizard Stepper Navigation -->
                 <div class="wizard-stepper">
                     <div class="step-item active" data-step="1">
@@ -190,12 +201,14 @@
 
                     <div class="form-group">
                         <label for="input-recipient-name">Recipient's Name or Nickname</label>
-                        <input type="text" id="input-recipient-name" class="form-control" placeholder="e.g. Sarah, Mom, David" maxlength="40">
+                        <input type="text" id="input-recipient-name" class="form-control"
+                            placeholder="e.g. Sarah, Mom, David" maxlength="40">
                     </div>
 
                     <div class="form-group">
                         <label for="input-creator-name">Your Name (The Creator)</label>
-                        <input type="text" id="input-creator-name" class="form-control" placeholder="e.g. Lightness, Alex" maxlength="40">
+                        <input type="text" id="input-creator-name" class="form-control"
+                            placeholder="e.g. Lightness, Alex" maxlength="40">
                     </div>
 
                     <div class="form-group">
@@ -331,13 +344,18 @@
                     <!-- Rich Message Editor -->
                     <div class="editor-container">
                         <div class="editor-toolbar">
-                            <button class="toolbar-btn" onclick="creator.insertEmoji('❤️')" title="Add Heart">❤️</button>
-                            <button class="toolbar-btn" onclick="creator.insertEmoji('🌸')" title="Add Flower">🌸</button>
-                            <button class="toolbar-btn" onclick="creator.insertEmoji('✨')" title="Add Sparkle">✨</button>
+                            <button class="toolbar-btn" onclick="creator.insertEmoji('❤️')"
+                                title="Add Heart">❤️</button>
+                            <button class="toolbar-btn" onclick="creator.insertEmoji('🌸')"
+                                title="Add Flower">🌸</button>
+                            <button class="toolbar-btn" onclick="creator.insertEmoji('✨')"
+                                title="Add Sparkle">✨</button>
                             <button class="toolbar-btn" onclick="creator.insertEmoji('🎂')" title="Add Cake">🎂</button>
-                            <button class="toolbar-btn" onclick="creator.insertEmoji('🥺')" title="Add Emotion">🥺</button>
+                            <button class="toolbar-btn" onclick="creator.insertEmoji('🥺')"
+                                title="Add Emotion">🥺</button>
                             <div class="toolbar-divider"></div>
-                            <select id="select-font-family" class="toolbar-select" onchange="creator.updateFontFamily(this.value)">
+                            <select id="select-font-family" class="toolbar-select"
+                                onchange="creator.updateFontFamily(this.value)">
                                 <option value="Montserrat">Font: Montserrat (Extra Bold Modern)</option>
                                 <option value="Times New Roman">Font: Times New Roman (Classic Serif)</option>
                                 <option value="Playfair Display">Font: Playfair Display (Elegant Romance)</option>
@@ -347,7 +365,8 @@
                                 <option value="Outfit">Font: Outfit (Modern Sans)</option>
                             </select>
                         </div>
-                        <textarea id="input-message-text" class="form-control editor-textarea" rows="7" placeholder="Write your heartfelt message here..."></textarea>
+                        <textarea id="input-message-text" class="form-control editor-textarea" rows="7"
+                            placeholder="Write your heartfelt message here..."></textarea>
                     </div>
 
                     <div class="wizard-actions">
@@ -368,8 +387,10 @@
                     </div>
 
                     <!-- Photo Upload Area -->
-                    <div class="photo-upload-zone" id="photo-upload-zone" onclick="document.getElementById('file-photo-input').click()">
-                        <input type="file" id="file-photo-input" accept="image/*" multiple style="display:none;" onchange="creator.handlePhotosUpload(event)">
+                    <div class="photo-upload-zone" id="photo-upload-zone"
+                        onclick="document.getElementById('file-photo-input').click()">
+                        <input type="file" id="file-photo-input" accept="image/*" multiple style="display:none;"
+                            onchange="creator.handlePhotosUpload(event)">
                         <div class="upload-zone-content">
                             <div class="upload-icon">📸</div>
                             <h3>Click or drag photos here to upload</h3>
@@ -412,21 +433,27 @@
                     <div class="music-selector-wrapper">
                         <label><i data-lucide="music"></i> Select Ambient Music Vibe:</label>
                         <div class="music-tracks-grid" id="music-tracks-grid">
-                            <div class="track-pill active" data-track="piano" onclick="creator.selectMusicTrack('piano')">
+                            <div class="track-pill active" data-track="piano"
+                                onclick="creator.selectMusicTrack('piano')">
                                 <span>🎹 Soft Romantic Piano</span>
-                                <button type="button" class="btn-play-preview" onclick="event.stopPropagation(); creator.previewTrack('piano');">▶</button>
+                                <button type="button" class="btn-play-preview"
+                                    onclick="event.stopPropagation(); creator.previewTrack('piano');">▶</button>
                             </div>
                             <div class="track-pill" data-track="lofi" onclick="creator.selectMusicTrack('lofi')">
                                 <span>🌙 Acoustic Lofi Chill</span>
-                                <button type="button" class="btn-play-preview" onclick="event.stopPropagation(); creator.previewTrack('lofi');">▶</button>
+                                <button type="button" class="btn-play-preview"
+                                    onclick="event.stopPropagation(); creator.previewTrack('lofi');">▶</button>
                             </div>
-                            <div class="track-pill" data-track="celebration" onclick="creator.selectMusicTrack('celebration')">
+                            <div class="track-pill" data-track="celebration"
+                                onclick="creator.selectMusicTrack('celebration')">
                                 <span>🎂 Party Celebration</span>
-                                <button type="button" class="btn-play-preview" onclick="event.stopPropagation(); creator.previewTrack('celebration');">▶</button>
+                                <button type="button" class="btn-play-preview"
+                                    onclick="event.stopPropagation(); creator.previewTrack('celebration');">▶</button>
                             </div>
                             <div class="track-pill" data-track="ocean" onclick="creator.selectMusicTrack('ocean')">
                                 <span>🌊 Serene Ocean Pad</span>
-                                <button type="button" class="btn-play-preview" onclick="event.stopPropagation(); creator.previewTrack('ocean');">▶</button>
+                                <button type="button" class="btn-play-preview"
+                                    onclick="event.stopPropagation(); creator.previewTrack('ocean');">▶</button>
                             </div>
                         </div>
                     </div>
@@ -543,21 +570,26 @@
                     <div class="password-setup-card">
                         <div class="quick-pass-box">
                             <label class="checkbox-container">
-                                <input type="checkbox" id="chk-use-recipient-pass" onchange="creator.toggleRecipientPassword(this.checked)">
+                                <input type="checkbox" id="chk-use-recipient-pass"
+                                    onchange="creator.toggleRecipientPassword(this.checked)">
                                 <span class="checkmark"></span>
-                                <span class="chk-text">Easy Password: Use recipient's name as password (e.g. <strong id="lbl-rec-pass-suggestion">SARAH</strong>)</span>
+                                <span class="chk-text">Easy Password: Use recipient's name as password (e.g. <strong
+                                        id="lbl-rec-pass-suggestion">SARAH</strong>)</span>
                             </label>
                         </div>
 
                         <div class="form-group">
                             <label for="input-custom-password">Custom Secret Password</label>
                             <div class="password-input-wrapper">
-                                <input type="text" id="input-custom-password" class="form-control" placeholder="Enter password (e.g. MAMA or Sarah2026)" oninput="creator.onPasswordInput()">
+                                <input type="text" id="input-custom-password" class="form-control"
+                                    placeholder="Enter password (e.g. MAMA or Sarah2026)"
+                                    oninput="creator.onPasswordInput()">
                                 <button type="button" class="btn-input-action" onclick="creator.generateRandomPass()">
                                     <i data-lucide="shuffle"></i> Auto
                                 </button>
                             </div>
-                            <span class="form-help">Passwords are hashed using SHA-256 client cryptography for privacy.</span>
+                            <span class="form-help">Passwords are hashed using SHA-256 client cryptography for
+                                privacy.</span>
                         </div>
                     </div>
 
@@ -575,7 +607,8 @@
                 <div class="wizard-page" id="wizard-step-6">
                     <div class="page-header">
                         <h2>✨ Your Surprise is Ready! ✨</h2>
-                        <p><strong id="lbl-share-recipient-name">Sarah</strong> has a little surprise waiting for them ❤️</p>
+                        <p><strong id="lbl-share-recipient-name">Sarah</strong> has a little surprise waiting for them
+                            ❤️</p>
                     </div>
 
                     <div class="share-box-card">
@@ -614,7 +647,7 @@
 
         <!-- ROUTE 4: RECIPIENT EXPERIENCE JOURNEY -->
         <section id="view-recipient" class="view-screen">
-            
+
             <!-- Floating Audio Control Bar -->
             <div class="audio-control-bar" id="audio-control-bar">
                 <span class="music-icon-pulse">🎵</span>
@@ -627,12 +660,14 @@
             <!-- DIAGNOSTIC ERROR & STATUS STAGE -->
             <div id="rec-stage-error" class="recipient-stage">
                 <div class="lock-card glass-panel text-center">
-                    <div class="lock-icon-wrapper" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3);">
+                    <div class="lock-icon-wrapper"
+                        style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3);">
                         <div class="lock-icon" id="error-stage-icon">💔</div>
                     </div>
-                    
+
                     <h2 class="lock-title" id="error-stage-title">Invalid Link</h2>
-                    <p class="lock-subtitle" id="error-stage-msg" style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                    <p class="lock-subtitle" id="error-stage-msg"
+                        style="color: var(--text-muted); margin-bottom: 1.5rem;">
                         This surprise could not be found. Please check that the link was copied correctly.
                     </p>
 
@@ -654,15 +689,17 @@
                         <div class="lock-pulse-ring"></div>
                         <div class="lock-icon" id="lock-icon-element">🔒</div>
                     </div>
-                    
+
                     <h2 class="lock-title">A little surprise is waiting for you...</h2>
                     <p class="lock-subtitle">A special surprise prepared just for you ❤️</p>
 
                     <div class="lock-form">
                         <div class="form-group">
-                            <input type="password" id="input-recipient-password" class="form-control text-center" placeholder="Enter your secret password..." autocomplete="off">
+                            <input type="password" id="input-recipient-password" class="form-control text-center"
+                                placeholder="Enter your secret password..." autocomplete="off">
                         </div>
-                        <button class="btn btn-gradient btn-block btn-lg" id="btn-unlock-surprise" onclick="recipient.attemptUnlock()">
+                        <button class="btn btn-gradient btn-block btn-lg" id="btn-unlock-surprise"
+                            onclick="recipient.attemptUnlock()">
                             Unlock Surprise ✨
                         </button>
                         <p id="lock-error-msg" class="lock-error-msg"></p>
@@ -687,9 +724,10 @@
             <div id="rec-stage-intro" class="recipient-stage">
                 <div class="intro-card glass-panel text-center">
                     <div class="floating-balloon-icon">🎈</div>
-                    <h1 class="greeting-heading" id="lbl-rec-greeting">Have a beautiful day, <span class="gradient-text" id="lbl-rec-name">Sarah</span> ❤️</h1>
+                    <h1 class="greeting-heading" id="lbl-rec-greeting">Have a beautiful day, <span class="gradient-text"
+                            id="lbl-rec-name">Sarah</span> ❤️</h1>
                     <p class="greeting-subtext" id="lbl-rec-subtext">"There is something I want you to know..."</p>
-                    
+
                     <div class="intro-cta">
                         <button class="btn btn-gradient btn-lg pulse-glow" onclick="recipient.nextStage('memories')">
                             START ✨
@@ -710,8 +748,10 @@
                     <div class="memory-card-viewport">
                         <div class="memory-card" id="active-memory-card">
                             <div class="memory-image-box">
-                                <img id="img-memory-current" src="" alt="Memory Photo" onerror="recipient.handleImageError(this)">
-                                <div id="memory-unavailable-banner" class="memory-unavailable-banner" style="display: none;">
+                                <img id="img-memory-current" src="" alt="Memory Photo"
+                                    onerror="recipient.handleImageError(this)">
+                                <div id="memory-unavailable-banner" class="memory-unavailable-banner"
+                                    style="display: none;">
                                     <span class="unavail-icon">🖼️</span>
                                     <h3 class="unavail-title">Memory unavailable</h3>
                                     <p class="unavail-sub">One of the memories could not be loaded.</p>
@@ -771,7 +811,7 @@
                     <div class="handwritten-letter-paper glass-paper" id="handwritten-paper">
                         <div class="letter-stamp">💌</div>
                         <h2 class="letter-recipient-title" id="lbl-letter-to">To my beautiful mom ❤️</h2>
-                        
+
                         <div class="letter-body-content" id="lbl-letter-body">
                             <!-- Populated with creator's custom message -->
                         </div>
@@ -785,8 +825,10 @@
                         <div class="reaction-reply-box">
                             <p class="reply-title">Leave a quick reaction for the creator: 😊</p>
                             <div class="reply-input-group">
-                                <input type="text" id="input-recipient-reaction" class="form-control" placeholder="e.g. This made me smile so much! ❤️">
-                                <button class="btn btn-secondary btn-sm" onclick="recipient.saveReactionNote()">Send Note</button>
+                                <input type="text" id="input-recipient-reaction" class="form-control"
+                                    placeholder="e.g. This made me smile so much! ❤️">
+                                <button class="btn btn-secondary btn-sm" onclick="recipient.saveReactionNote()">Send
+                                    Note</button>
                             </div>
                             <p id="lbl-reaction-status" class="reaction-status-msg"></p>
                         </div>
@@ -816,4 +858,5 @@
     <script src="js/recipient.js?v=1.0.8"></script>
     <script src="js/app.js?v=1.0.8"></script>
 </body>
+
 </html>

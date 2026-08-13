@@ -11,8 +11,9 @@ class StorageManager {
         this.initIndexedDB();
 
         // Optional Supabase Realtime Database Integration
-        this.supabaseUrl = window.SUPABASE_URL || '';
-        this.supabaseKey = window.SUPABASE_ANON_KEY || '';
+        let rawUrl = (window.SUPABASE_URL || '').trim();
+        this.supabaseUrl = rawUrl.replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
+        this.supabaseKey = (window.SUPABASE_ANON_KEY || '').trim();
         this.supabase = (window.supabase && this.supabaseUrl && this.supabaseKey)
             ? window.supabase.createClient(this.supabaseUrl, this.supabaseKey)
             : null;
