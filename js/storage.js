@@ -212,6 +212,40 @@ class StorageManager {
         }
     }
 
+    utf8ToBase64(str) {
+        try {
+            const bytes = new TextEncoder().encode(str);
+            let binary = '';
+            const len = bytes.byteLength;
+            for (let i = 0; i < len; i += 8192) {
+                binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+            }
+            let b64 = btoa(binary);
+            return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        } catch (e) {
+            console.error("utf8ToBase64 error:", e);
+            return '';
+        }
+    }
+
+    base64ToUtf8(b64Str) {
+        try {
+            let clean = (b64Str || '').replace(/^payload_/, '').replace(/-/g, '+').replace(/_/g, '/');
+            while (clean.length % 4 !== 0) {
+                clean += '=';
+            }
+            const binary = atob(clean);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            return new TextDecoder().decode(bytes);
+        } catch (e) {
+            console.error("base64ToUtf8 error:", e);
+            return null;
+        }
+    }
+
     encodeSurpriseToURL(surpriseData) {
         try {
             const sanitizedMemories = (surpriseData.memories || []).map(m => {
@@ -237,12 +271,7 @@ class StorageManager {
                 imgs: sanitizedMemories
             };
             const jsonStr = JSON.stringify(compact);
-            
-            let base64 = btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g, (match, p1) => {
-                return String.fromCharCode('0x' + p1);
-            }));
-
-            base64 = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            const base64 = this.utf8ToBase64(jsonStr);
             
             return `payload_${base64}`;
         } catch (e) {
@@ -251,10 +280,26 @@ class StorageManager {
         }
     }
 
-    decodeCompactPayload(compact) {
+    decodeCompactPayload(compactInput) {
+        let compact = compactInput;
+
+        if (typeof compactInput === 'string') {
+            const decodedJson = this.base64ToUtf8(compactInput);
+            if (decodedJson) {
+                try { compact = JSON.parse(decodedJson); } catch (e) { console.error("JSON parse error:", e); }
+            }
+        } else if (compactInput && typeof compactInput.id === 'string' && compactInput.id.startsWith('payload_')) {
+            const decodedJson = this.base64ToUtf8(compactInput.id);
+            if (decodedJson) {
+                try { compact = JSON.parse(decodedJson); } catch (e) { console.error("JSON parse error:", e); }
+            }
+        }
+
+        if (!compact || typeof compact !== 'object') return null;
+
         const rawMemories = compact.imgs || compact.memories || [];
         return {
-            id: compact.id,
+            id: compact.id || storageManager.generateShortId(),
             recipient_name: compact.n || compact.recipient_name || '',
             creator_name: compact.c || compact.creator_name || 'Someone Special',
             relationship: compact.r || compact.relationship || 'My Love',

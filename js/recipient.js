@@ -40,7 +40,7 @@ class RecipientJourney {
         
         if (!surpriseData && surpriseId.startsWith('payload_')) {
             try {
-                const compactData = storageManager.decodeCompactPayload({ id: surpriseId });
+                const compactData = storageManager.decodeCompactPayload(surpriseId);
                 if (compactData && (compactData.message || compactData.recipient_name)) {
                     surpriseData = compactData;
                 }
