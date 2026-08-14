@@ -32,7 +32,7 @@
     </script>
 
     <!-- Application Stylesheets -->
-    <link rel="stylesheet" href="css/styles.css?v=1.0.8">
+    <link rel="stylesheet" href="css/styles.css?v=1.0.9">
 </head>
 
 <body data-theme="love">
@@ -335,7 +335,16 @@
 
                     <!-- Template Selector Slider/Grid -->
                     <div class="templates-wrapper">
-                        <label>Heartwarming Template Ideas:</label>
+                        <div class="template-header-row">
+                            <label>Heartwarming Template Ideas:</label>
+                            <div class="tone-filter-pills" id="tone-filter-pills">
+                                <button type="button" class="tone-pill active" data-tone="all" onclick="creator.filterTemplatesByTone('all')">✨ All</button>
+                                <button type="button" class="tone-pill" data-tone="romantic" onclick="creator.filterTemplatesByTone('romantic')">🌹 Romantic</button>
+                                <button type="button" class="tone-pill" data-tone="cheerful" onclick="creator.filterTemplatesByTone('cheerful')">😊 Cheerful</button>
+                                <button type="button" class="tone-pill" data-tone="funny" onclick="creator.filterTemplatesByTone('funny')">😂 Funny</button>
+                                <button type="button" class="tone-pill" data-tone="emotional" onclick="creator.filterTemplatesByTone('emotional')">🥺 Emotional</button>
+                            </div>
+                        </div>
                         <div class="templates-chips" id="template-chips">
                             <!-- Populated dynamically -->
                         </div>
@@ -850,13 +859,13 @@
     </div>
 
     <!-- Application JavaScript Modules -->
-    <script src="js/audio.js?v=1.0.8"></script>
-    <script src="js/themes.js?v=1.0.8"></script>
-    <script src="js/templates.js?v=1.0.8"></script>
-    <script src="js/storage.js?v=1.0.8"></script>
-    <script src="js/creator.js?v=1.0.8"></script>
-    <script src="js/recipient.js?v=1.0.8"></script>
-    <script src="js/app.js?v=1.0.8"></script>
+    <script src="js/audio.js?v=1.0.9"></script>
+    <script src="js/themes.js?v=1.0.9"></script>
+    <script src="js/templates.js?v=1.0.9"></script>
+    <script src="js/storage.js?v=1.0.9"></script>
+    <script src="js/creator.js?v=1.0.9"></script>
+    <script src="js/recipient.js?v=1.0.9"></script>
+    <script src="js/app.js?v=1.0.9"></script>
 </body>
 
 </html>

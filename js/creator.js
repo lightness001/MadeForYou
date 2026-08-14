@@ -126,40 +126,68 @@ class CreatorWizard {
     }
 
     /* Template selection & insertion */
-    loadTemplates() {
+    async loadTemplates() {
+        this.currentToneFilter = this.currentToneFilter || 'all';
+        await this.renderTemplatesForTone(this.currentToneFilter);
+    }
+
+    async filterTemplatesByTone(tone) {
+        this.currentToneFilter = tone;
+
+        document.querySelectorAll('.tone-pill').forEach(btn => {
+            if (btn.getAttribute('data-tone') === tone) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        await this.renderTemplatesForTone(tone);
+        if (window.audioManager) audioManager.playClick();
+    }
+
+    async renderTemplatesForTone(tone) {
         const container = document.getElementById('template-chips');
         if (!container) return;
 
-        const defaultMsg = getTemplateFor(this.formData.relationship, this.formData.occasion);
-        const textarea = document.getElementById('input-message-text');
+        const templates = await storageManager.getTemplateMessages(
+            this.formData.relationship,
+            this.formData.occasion,
+            tone
+        );
 
-        if (textarea && (!textarea.value || textarea.value === defaultMsg)) {
-            textarea.value = defaultMsg;
-            this.formData.message = defaultMsg;
+        this.templateCache = templates || [];
+
+        if (this.templateCache.length === 0) {
+            container.innerHTML = `<div class="template-chip">No ${tone} template ideas found</div>`;
+            return;
         }
 
-        const options = [
-            { label: '💖 Perfect Template', text: defaultMsg },
-            { label: '🌹 Heartfelt Love', text: `Dearest ${this.formData.recipient_name || 'loved one'},\n\nEvery day with you is a gift. I cherish your smile, your warmth, and all the wonderful memories we share. You are truly my person! ❤️` },
-            { label: '✨ Gratitude & Peace', text: `Dear ${this.formData.recipient_name || 'friend'},\n\nI just wanted to take a moment to say how much you mean to me. Thank you for always bringing so much light into my life! 🙏` }
-        ];
-
-        container.innerHTML = options.map((opt, i) => `
-            <div class="template-chip" onclick="creator.applyTemplate('${i}')">
-                ${opt.label}
+        container.innerHTML = this.templateCache.map((opt, i) => `
+            <div class="template-chip" onclick="creator.applyTemplate('${i}')" title="${(opt.text || opt.message || '').replace(/"/g, '&quot;')}">
+                ${opt.label || opt.title || '💌 Heartfelt Note'}
             </div>
         `).join('');
 
-        this.templateCache = options;
+        const textarea = document.getElementById('input-message-text');
+        if (textarea && (!textarea.value || !textarea.value.trim()) && this.templateCache[0]) {
+            const msg = this.templateCache[0].text || this.templateCache[0].message || '';
+            textarea.value = msg;
+            this.formData.message = msg;
+        }
     }
 
     applyTemplate(index) {
         if (this.templateCache && this.templateCache[index]) {
+            const item = this.templateCache[index];
+            const msg = item.text || item.message || '';
             const textarea = document.getElementById('input-message-text');
-            textarea.value = this.templateCache[index].text;
-            this.formData.message = this.templateCache[index].text;
-            audioManager.playClick();
-            app.showToast('Template applied! ✨');
+            if (textarea) {
+                textarea.value = msg;
+                this.formData.message = msg;
+                if (window.audioManager) audioManager.playClick();
+                if (window.app) app.showToast('Template applied! ✨');
+            }
         }
     }
 

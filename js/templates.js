@@ -100,3 +100,85 @@ function getTemplateFor(relationship, occasion) {
     }
     return `Dearest ${relationship || 'friend'},\n\nI just wanted to take a moment to send you this little surprise and remind you how special you are to me. Thank you for bringing so much brightness, love, and joy into my life. I appreciate you more than words can say! ❤️`;
 }
+
+/**
+ * Returns categorized template ideas (romantic, cheerful, funny, emotional)
+ */
+function getTemplatesWithTone(relationship, occasion, filterTone = 'all') {
+    const name = relationship || 'friend';
+    
+    const allTemplates = [
+        // ROMANTIC
+        {
+            tone: 'romantic',
+            label: '🌹 Endless Romance',
+            text: `Every single moment spent with you feels like a dream come true. You bring so much joy, warmth, and laughter into my life. I love you more than words could ever describe! ❤️`
+        },
+        {
+            tone: 'romantic',
+            label: '💖 Soulmate Note',
+            text: `In a world full of temporary things, you are my favorite constant. Being with you makes every ordinary day feel like a magical celebration of love. Forever yours! 🌹✨`
+        },
+        {
+            tone: 'romantic',
+            label: '💌 Secret Heartbeat',
+            text: `Just a little reminder: you are my safe space, my favorite thought, and the sweetest part of my day. I appreciate you more than words can say. 🥰💖`
+        },
+
+        // CHEERFUL
+        {
+            tone: 'cheerful',
+            label: '☀️ Sunshine & Smiles',
+            text: `Sending you a big burst of sunshine today! You bring so much bright energy, joy, and warmth into my world. Keep shining and stay awesome! 😊✨`
+        },
+        {
+            tone: 'cheerful',
+            label: '🎉 Good Vibes Only',
+            text: `Wishing you a day packed with pure happiness, good food, great music, and endless reasons to smile! Have an absolutely wonderful day! 🥳🎈`
+        },
+        {
+            tone: 'cheerful',
+            label: '🌸 Daily Positivity',
+            text: `Here is your daily dose of sunshine! Remember how amazing, talented, and capable you are. Go out there and conquer the day! 🚀☀️`
+        },
+
+        // FUNNY
+        {
+            tone: 'funny',
+            label: '🍕 Pizza > Anything',
+            text: `I love you more than pizza, coffee, and hitting the snooze button combined. And trust me, that is saying A LOT! 🍕☕❤️`
+        },
+        {
+            tone: 'funny',
+            label: '😜 Favorite Weirdo',
+            text: `We will definitely be the old folks causing trouble in the nursing home together in the future. Thanks for being my favorite weirdo! 🤪🔥`
+        },
+        {
+            tone: 'funny',
+            label: '🎂 Upgraded Version',
+            text: `Don't think of it as getting older—think of it as upgrading to a newer, more experienced version of awesome! Happy celebration! 🎂😜🎉`
+        },
+
+        // EMOTIONAL
+        {
+            tone: 'emotional',
+            label: '🥺 Heartfelt Gratitude',
+            text: `Words will never be enough to thank you for every sacrifice, quiet prayer, and unconditional love you have poured into my life. You mean the world to me. 🙏❤️`
+        },
+        {
+            tone: 'emotional',
+            label: '👔 Pillar of Strength',
+            text: `Thank you for being my anchor, my guide, and my constant support. Everything good in me comes from your wisdom, patience, and love. Respect always! 👔❤️`
+        },
+        {
+            tone: 'emotional',
+            label: '🌹 Treasured Connection',
+            text: `I just wanted to take a quiet moment to tell you how deeply grateful I am to have you in my life. You make every ordinary moment feel extraordinary. Thank you for being you! 🌸❤️`
+        }
+    ];
+
+    if (!filterTone || filterTone === 'all') {
+        return allTemplates;
+    }
+    return allTemplates.filter(t => t.tone.toLowerCase() === filterTone.toLowerCase());
+}

@@ -176,6 +176,26 @@ class StorageManager {
         return null;
     }
 
+    async getTemplateMessages(relationship, occasion, tone = 'all') {
+        if (this.supabase) {
+            try {
+                let query = this.supabase.from('template_messages').select('*');
+                if (tone && tone !== 'all') {
+                    query = query.eq('tone', tone.toLowerCase());
+                }
+                const { data, error } = await query;
+                if (!error && data && data.length > 0) {
+                    return data;
+                }
+            } catch (e) {
+                console.warn("Supabase template fetch warning:", e);
+            }
+        }
+        return typeof getTemplatesWithTone === 'function'
+            ? getTemplatesWithTone(relationship, occasion, tone)
+            : [];
+    }
+
     async getAllSurprises() {
         if (this.db) {
             const list = await new Promise((resolve) => {
